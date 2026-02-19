@@ -1,0 +1,9 @@
+logs
+npm-debug
+node_modules
+dist
+dist-ssr
+coverage
+*.local
+data/database*
+.env

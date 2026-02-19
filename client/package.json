@@ -1,0 +1,20 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "description": "Web app front",
+  "homepage": "https://github.com/TuringCollegeSubmissions/nasimon-WD2.3.4.5#readme",
+  "bugs": {
+    "url": "https://github.com/TuringCollegeSubmissions/nasimon-WD2.3.4.5/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TuringCollegeSubmissions/nasimon-WD2.3.4.5.git"
+  },
+  "license": "ISC",
+  "author": "n4n",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
