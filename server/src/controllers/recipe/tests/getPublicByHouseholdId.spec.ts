@@ -101,7 +101,7 @@ describe('Recipe Get All Public By Household Controller', () => {
   it('should throw if the input is not properly formatted', async () => {
     await expect(
       getPublicByHouseholdId({
-        householdId: 'notAnId',
+        householdId: 'notAnId' as any,
       })
     ).rejects.toThrow(
       expect.objectContaining({

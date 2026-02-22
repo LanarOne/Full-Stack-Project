@@ -19,23 +19,22 @@ export default publicProcedure
   )
   .mutation(
     async ({ input: user, ctx: { repos } }) => {
-      try {
-        const passwordHash = await hash(
-          user.password,
-          config.auth.passwordCost
+      const passwordHash = await hash(
+        user.password,
+        config.auth.passwordCost
+      )
+
+      const created = await repos.userRepo
+        .create({
+          ...user,
+          password: passwordHash,
+        })
+        .catch((error) =>
+          handleKyselyErrors(error)
         )
 
-        const created =
-          await repos.userRepo.create({
-            ...user,
-            password: passwordHash,
-          })
-
-        return {
-          id: created.id,
-        }
-      } catch (error) {
-        handleKyselyErrors(error)
+      return {
+        id: created.id,
       }
     }
   )

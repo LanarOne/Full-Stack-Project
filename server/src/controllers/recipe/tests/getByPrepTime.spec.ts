@@ -229,7 +229,9 @@ describe('Recipe Get By Preparation Time Controller', () => {
 
   it('should throw if a field is not properly formatted', async () => {
     await expect(
-      getByPrepTime({ prepTime: 'notAnInt' })
+      getByPrepTime({
+        prepTime: 'notAnInt' as any,
+      })
     ).rejects.toThrow(
       expect.objectContaining({
         code: 'BAD_REQUEST',

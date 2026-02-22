@@ -26,7 +26,8 @@ export default authedHouseholdProcedure
           message: 'You must provide a recipe ID',
         })
       }
-      return await repos.mealRepo
+
+      const result = await repos.mealRepo
         .findByRecipeId(
           recipeId,
           authHousehold!.id
@@ -34,5 +35,7 @@ export default authedHouseholdProcedure
         .catch((error: unknown) =>
           handleKyselyErrors(error)
         )
+
+      return result
     }
   )

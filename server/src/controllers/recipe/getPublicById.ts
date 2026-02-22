@@ -19,8 +19,8 @@ export default authedProcedure
     }) => {
       const recipe = await repos.recipeRepo
         .findById({
-          id: id,
-          householdId: householdId,
+          id,
+          householdId,
         })
         .catch((error: unknown) =>
           handleKyselyErrors(error)

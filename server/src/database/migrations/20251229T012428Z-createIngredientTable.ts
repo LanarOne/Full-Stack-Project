@@ -56,6 +56,10 @@ export async function down(db: Kysely<any>) {
   await db.schema
     .alterTable('ingredient')
     .dropConstraint('ingredient_unit_check')
+    .execute()
+
+  await db.schema
+    .alterTable('ingredient')
     .dropConstraint('ingredient_storage_check')
     .execute()
 

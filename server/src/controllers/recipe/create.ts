@@ -35,11 +35,13 @@ export default authedHouseholdProcedure
       input: recipe,
       ctx: { repos, authHousehold },
     }) => {
-      return await repos.recipeRepo
+      const result = await repos.recipeRepo
         .create({
           ...recipe,
-          householdId: authHousehold.id,
+          householdId: authHousehold!.id,
         })
         .catch((err) => handleKyselyErrors(err))
+
+      return result
     }
   )

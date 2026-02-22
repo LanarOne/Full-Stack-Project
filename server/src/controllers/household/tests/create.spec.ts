@@ -1,7 +1,6 @@
 import { wrapInRollbacks } from '@server/tests/utils/transactions'
 import { createTestDatabase } from '@server/tests/utils/testDatabase'
 import { createCallerFactory } from '@server/trpc'
-import householdRouter from '..'
 import {
   authContext,
   requestContext,
@@ -9,6 +8,7 @@ import {
 import { insertAll } from '@server/tests/utils/records'
 import { fakeUser } from '@server/entities/test/fakes'
 import { describe, it, expect } from 'vitest'
+import householdRouter from '..'
 
 const db = await wrapInRollbacks(
   createTestDatabase()
@@ -72,7 +72,7 @@ describe('Household Create Controller', () => {
 
   it('should throw if the name is not valid', async () => {
     await expect(
-      create({ name: 1312 })
+      create({ name: 1312 as any })
     ).rejects.toThrow(
       expect.objectContaining({
         code: 'BAD_REQUEST',

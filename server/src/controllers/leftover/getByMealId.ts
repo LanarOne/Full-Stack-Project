@@ -19,10 +19,12 @@ export default authedHouseholdProcedure
       input: { mealId },
       ctx: { authHousehold, repos },
     }) => {
-      return await repos.leftoverRepo
+      const result = await repos.leftoverRepo
         .findByMealId(mealId, authHousehold!.id)
         .catch((error: unknown) =>
           handleKyselyErrors(error)
         )
+
+      return result
     }
   )

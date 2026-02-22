@@ -23,17 +23,19 @@ export default authedProcedure
   )
   .mutation(
     async ({ input: user, ctx: { repos } }) => {
-      try {
-        const { id, name, diet, allergies } = user
+      const { id, name, diet, allergies } = user
 
-        return await repos.userRepo.update({
+      const result = await repos.userRepo
+        .update({
           id,
           name,
           diet,
           allergies,
         })
-      } catch (error) {
-        handleKyselyErrors(error)
-      }
+        .catch((error) =>
+          handleKyselyErrors(error)
+        )
+
+      return result
     }
   )

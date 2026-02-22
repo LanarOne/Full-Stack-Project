@@ -1,10 +1,10 @@
-import { createCallerFactory, router } from '..'
 import {
   authContext,
   requestContext,
 } from '@server/tests/utils/context'
 import { describe, it, expect } from 'vitest'
 import { authedProcedure } from '@server/trpc/authedProcedure/index'
+import { createCallerFactory, router } from '..'
 
 const routes = router({
   testCall: authedProcedure.query(() => 'passed'),

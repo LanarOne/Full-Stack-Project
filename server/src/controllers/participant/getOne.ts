@@ -27,8 +27,10 @@ export default authedProcedure
       input: { mealId, userId },
       ctx: { repos },
     }) => {
-      return await repos.participantRepo
+      const result = await repos.participantRepo
         .findOne(userId, mealId)
         .catch((err) => handleKyselyErrors(err))
+
+      return result
     }
   )

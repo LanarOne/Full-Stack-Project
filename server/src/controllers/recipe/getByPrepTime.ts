@@ -4,7 +4,10 @@ import { recipeRepo } from '@server/repositories/recipeRepo'
 import { memberRepo } from '@server/repositories/memberRepo'
 import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware'
 import { enforceIsGuest } from '@server/trpc/middlewares/isGuestMiddleware'
-import { recipeSchema } from '@server/entities/recipe'
+import {
+  type RecipePublic,
+  recipeSchema,
+} from '@server/entities/recipe'
 import { handleKyselyErrors } from '@server/utils/errors'
 
 export default authedHouseholdProcedure
@@ -18,8 +21,8 @@ export default authedHouseholdProcedure
     async ({
       input: { prepTime },
       ctx: { repos, authHousehold },
-    }) => {
-      return await repos.recipeRepo
+    }): Promise<RecipePublic[]> => {
+      const result = await repos.recipeRepo
         .findByPrepTime(
           prepTime,
           authHousehold!.id
@@ -27,5 +30,7 @@ export default authedHouseholdProcedure
         .catch((error: unknown) =>
           handleKyselyErrors(error)
         )
+
+      return result
     }
   )

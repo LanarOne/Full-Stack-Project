@@ -15,8 +15,6 @@ import type {
   Updateable,
 } from 'kysely'
 import type { Leftover } from '@server/database'
-import meal from '@server/controllers/meal'
-import leftover from '@server/controllers/leftover'
 
 const db = await wrapInRollbacks(
   createTestDatabase()

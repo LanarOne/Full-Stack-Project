@@ -1,6 +1,5 @@
 import type {
   Database,
-  DB,
   Ingredient,
 } from '@server/database'
 import type {
@@ -12,7 +11,6 @@ import {
   ingredientKeysPublic,
   type IngredientPublic,
 } from '@server/entities/ingredient'
-import type { UpdateObjectExpression } from 'kysely/dist/cjs/parser/update-set-parser'
 
 export function ingredientRepo(db: Database) {
   return {

@@ -35,9 +35,7 @@ export default authedHouseholdProcedure
           userId,
           householdId: authHousehold!.id,
         })
-        .catch(() => {
-          return null
-        })
+        .catch(() => null)
 
       if (alreadyExist) {
         throw new TRPCError({
@@ -47,14 +45,16 @@ export default authedHouseholdProcedure
         })
       }
 
-      return await repos.memberRepo
+      const result = await repos.memberRepo
         .create({
           householdId: authHousehold?.id,
-          userId: userId,
+          userId,
           roleId: 3,
         })
         .catch((error) =>
           handleKyselyErrors(error)
         )
+
+      return result
     }
   )

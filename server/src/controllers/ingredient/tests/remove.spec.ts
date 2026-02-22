@@ -23,11 +23,11 @@ const createCaller = createCallerFactory(
   ingredientRouter
 )
 
-const [household, secondHousehold] =
-  await insertAll(db, 'household', [
-    fakeHousehold(),
-    fakeHousehold(),
-  ])
+const [household] = await insertAll(
+  db,
+  'household',
+  [fakeHousehold()]
+)
 
 const [user] = await insertAll(db, 'user', [
   fakeUser(),

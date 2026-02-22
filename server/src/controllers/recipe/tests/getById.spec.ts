@@ -210,7 +210,7 @@ describe('Recipe Get By ID Controller', () => {
 
   it('should throw if a field is not properly formatted', async () => {
     await expect(
-      getById({ id: 'notAnId' })
+      getById({ id: 'notAnId' as any })
     ).rejects.toThrow(
       expect.objectContaining({
         code: 'BAD_REQUEST',

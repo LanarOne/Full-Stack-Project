@@ -8,7 +8,10 @@ import {
   fakeRecipe,
 } from '@server/entities/test/fakes'
 import type { Recipe } from '@server/database'
-import type { Insertable } from 'kysely'
+import type {
+  Insertable,
+  Updateable,
+} from 'kysely'
 
 const db = await wrapInRollbacks(
   createTestDatabase()
@@ -600,7 +603,7 @@ describe('Updates a recipe', () => {
         id: recipe.id,
         prepTime: 100,
         name: 'carbonara',
-      } as any as Partial<Recipe>,
+      } as any as Updateable<Recipe>,
       household.id
     )
 
@@ -616,7 +619,7 @@ describe('Updates a recipe', () => {
         prepTime: 100,
         name: 'carbonara',
         public: true,
-      } as any as Partial<Recipe>,
+      } as any as Updateable<Recipe>,
       household.id
     )
 
@@ -644,7 +647,7 @@ describe('Updates a recipe', () => {
         prepTime: 100,
         name: 'carbonara',
         public: false,
-      } as any as Partial<Recipe>,
+      } as any as Updateable<Recipe>,
       household.id
     )
 
@@ -661,7 +664,7 @@ describe('Updates a recipe', () => {
           id: 1312,
           prepTime: 100,
           name: 'carbonara',
-        } as any as Partial<Recipe>,
+        } as any as Updateable<Recipe>,
         household.id
       )
     ).rejects.toThrow(
@@ -678,7 +681,7 @@ describe('Updates a recipe', () => {
           id: recipe.id,
           prepTime: 100,
           name: 'carbonara',
-        } as any as Partial<Recipe>,
+        } as any as Updateable<Recipe>,
         1312
       )
     ).rejects.toThrow(
@@ -695,7 +698,7 @@ describe('Updates a recipe', () => {
           id: recipe.id,
           name: 1312,
           prepTime: 'n4n',
-        } as any as Partial<Recipe>,
+        } as any as Updateable<Recipe>,
         household.id
       )
     ).rejects.toThrow(
@@ -717,7 +720,7 @@ describe('Updates a recipe', () => {
           name: 'carbo',
           prepTime: 20,
           newField: 'malevolent hack',
-        } as any as Partial<Recipe>,
+        } as any as Updateable<Recipe>,
         household.id
       )
     ).rejects.toThrow(
@@ -738,7 +741,7 @@ describe('Updates a recipe', () => {
           id: recipe.id,
           name: 'carbo',
           prepTime: 20,
-        } as any as Partial<Recipe>,
+        } as any as Updateable<Recipe>,
         'notAnId' as any
       )
     ).rejects.toThrow(

@@ -24,11 +24,13 @@ export default authedProcedure
   .use(enforceWasInvited)
   .mutation(
     async ({
-             input: { mealId, userId },
-             ctx: { repos },
-           }) => {
-      return await repos.participantRepo
+      input: { mealId, userId },
+      ctx: { repos },
+    }) => {
+      const result = await repos.participantRepo
         .delete({ userId, mealId })
         .catch((err) => handleKyselyErrors(err))
+
+      return result
     }
   )

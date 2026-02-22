@@ -40,12 +40,15 @@ export default authedHouseholdProcedure
           )
           .catch((err) => handleKyselyErrors(err))
 
-      return await repos.recipeIngredientRepo
-        .create({
-          ...recipeIngredient,
-          unit: ingredient.unit,
-          householdId: authHousehold!.id,
-        })
-        .catch((err) => handleKyselyErrors(err))
+      const result =
+        await repos.recipeIngredientRepo
+          .create({
+            ...recipeIngredient,
+            unit: ingredient.unit,
+            householdId: authHousehold!.id,
+          })
+          .catch((err) => handleKyselyErrors(err))
+
+      return result
     }
   )

@@ -35,10 +35,12 @@ export default authedHouseholdProcedure
       input: participant,
       ctx: { repos },
     }) => {
-      return await repos.participantRepo
+      const result = await repos.participantRepo
         .create({
           ...participant,
         })
         .catch((err) => handleKyselyErrors(err))
+
+      return result
     }
   )

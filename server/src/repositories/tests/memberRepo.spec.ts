@@ -220,15 +220,13 @@ describe('Creates a new Member', () => {
 
 describe('Finds a particular Member', () => {
   it('should find a member', async () => {
-    await insertAll(
-      db,
-      'member',
+    await insertAll(db, 'member', [
       fakeMember({
         userId: user.id,
         householdId: household.id,
         roleId: 1,
-      })
-    )
+      }),
+    ])
 
     await expect(
       repository.findOne({

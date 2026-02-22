@@ -26,8 +26,10 @@ export default authedProcedure
       input: { mealId },
       ctx: { repos },
     }) => {
-      return await repos.participantRepo
+      const result = await repos.participantRepo
         .findUnconfirmed(mealId)
         .catch((err) => handleKyselyErrors(err))
+
+      return result
     }
   )

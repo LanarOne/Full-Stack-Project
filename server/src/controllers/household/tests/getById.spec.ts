@@ -1,7 +1,6 @@
 import { createTestDatabase } from '@server/tests/utils/testDatabase'
 import { wrapInRollbacks } from '@server/tests/utils/transactions'
 import { createCallerFactory } from '@server/trpc'
-import householdRouter from '..'
 import { insertAll } from '@server/tests/utils/records'
 import {
   fakeHousehold,
@@ -12,6 +11,7 @@ import {
   authContext,
   requestContext,
 } from '@server/tests/utils/context'
+import householdRouter from '..'
 
 const db = await wrapInRollbacks(
   createTestDatabase()
@@ -38,7 +38,7 @@ describe('Household getById controller', () => {
     )
 
     await expect(
-      getById(household.id)
+      getById({ id: household.id })
     ).rejects.toThrow(
       expect.objectContaining({
         message: 'Unauthenticated. Please log in',

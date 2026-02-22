@@ -1,10 +1,10 @@
 import { wrapInRollbacks } from '@server/tests/utils/transactions'
 import { createTestDatabase } from '@server/tests/utils/testDatabase'
 import { createCallerFactory } from '@server/trpc'
-import userRouter from '..'
 import { insertAll } from '@server/tests/utils/records'
 import { fakeUser } from '@server/entities/test/fakes'
 import { describe, it, expect } from 'vitest'
+import userRouter from '..'
 
 const db = await wrapInRollbacks(
   createTestDatabase()

@@ -3,7 +3,6 @@ import provideRepos from '@server/trpc/provideRepos'
 import { memberRepo } from '@server/repositories/memberRepo'
 import { memberSchema } from '@server/entities/member'
 import { TRPCError } from '@trpc/server'
-import { isMember } from '@server/helpers/isMember'
 import { isAdmin } from '@server/helpers/isAdmin'
 import { handleKyselyErrors } from '@server/utils/errors'
 import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware'
@@ -41,10 +40,12 @@ export default authedHouseholdProcedure
         })
       }
 
-      return await repos.memberRepo
+      const result = await repos.memberRepo
         .delete(userId, authHousehold.id)
         .catch((error) =>
           handleKyselyErrors(error)
         )
+
+      return result
     }
   )

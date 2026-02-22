@@ -6,9 +6,11 @@ import { handleKyselyErrors } from '@server/utils/errors'
 export default authedProcedure
   .use(provideRepos({ memberRepo }))
   .query(async ({ ctx: { repos, authUser } }) => {
-    return await repos.memberRepo
+    const result = await repos.memberRepo
       .findByUserId(authUser.id)
       .catch((error: unknown) =>
         handleKyselyErrors(error)
       )
+
+    return result
   })

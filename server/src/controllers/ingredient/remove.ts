@@ -21,10 +21,12 @@ export default authedHouseholdProcedure
       input: { id },
       ctx: { repos, authHousehold },
     }) => {
-      return await repos.ingredientRepo
+      const result = await repos.ingredientRepo
         .delete(id, authHousehold!.id)
         .catch((err: unknown) =>
           handleKyselyErrors(err)
         )
+
+      return result
     }
   )

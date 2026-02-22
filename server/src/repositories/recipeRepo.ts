@@ -1,6 +1,5 @@
 import type {
   Database,
-  DB,
   Recipe,
 } from '@server/database'
 import type {
@@ -13,7 +12,6 @@ import {
   recipeKeysPublic,
   type RecipePublic,
 } from '@server/entities/recipe'
-import type { UpdateObjectExpression } from 'kysely/dist/cjs/parser/update-set-parser'
 
 export function recipeRepo(db: Database) {
   return {
@@ -109,7 +107,7 @@ export function recipeRepo(db: Database) {
       return db
         .updateTable('recipe')
         .set(fieldsToUpdate)
-        .where('id', '=', id)
+        .where('id', '=', Number(id))
         .where('householdId', '=', householdId)
         .returning(recipeKeysPublic)
         .executeTakeFirstOrThrow()

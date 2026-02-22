@@ -13,8 +13,10 @@ export default authedProcedure
   )
   .mutation(
     async ({ ctx: { repos, authUser } }) => {
-      return await repos.participantRepo
+      const result = await repos.participantRepo
         .findByUserId(authUser.id)
         .catch((err) => handleKyselyErrors(err))
+
+      return result
     }
   )

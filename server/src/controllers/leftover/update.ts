@@ -29,11 +29,13 @@ export default authedHouseholdProcedure
       input: leftover,
       ctx: { repos, authHousehold },
     }) => {
-      return await repos.leftoverRepo
+      const result = await repos.leftoverRepo
         .update({
           ...leftover,
           householdId: authHousehold!.id,
         })
         .catch((err) => handleKyselyErrors(err))
+
+      return result
     }
   )

@@ -18,13 +18,15 @@ export default authedProcedure
       input: { householdId },
       ctx: { authUser, repos },
     }) => {
-      try {
-        return await repos.memberRepo.findOne({
-          householdId: householdId,
+      const result = await repos.memberRepo
+        .findOne({
+          householdId,
           userId: authUser.id,
         })
-      } catch (error) {
-        handleKyselyErrors(error)
-      }
+        .catch((error) =>
+          handleKyselyErrors(error)
+        )
+
+      return result
     }
   )

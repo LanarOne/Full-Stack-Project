@@ -19,10 +19,12 @@ export default authedHouseholdProcedure
       input: { name },
       ctx: { repos, authHousehold },
     }) => {
-      return await repos.recipeRepo
+      const result = await repos.recipeRepo
         .findByName(name, authHousehold!.id)
         .catch((error: unknown) =>
           handleKyselyErrors(error)
         )
+
+      return result
     }
   )

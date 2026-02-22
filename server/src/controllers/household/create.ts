@@ -22,24 +22,28 @@ export default authedProcedure
       input,
       ctx: { authUser, repos },
     }) => {
-      try {
-        const { name, profilePicture } = input
+      const { name, profilePicture } = input
 
-        const newHousehold =
-          await repos.householdRepo.create({
+      const newHousehold =
+        await repos.householdRepo
+          .create({
             name,
             profilePicture,
           })
+          .catch((error) =>
+            handleKyselyErrors(error)
+          )
 
-        await repos.memberRepo.create({
+      await repos.memberRepo
+        .create({
           householdId: newHousehold.id,
           userId: authUser.id,
           roleId: 1,
         })
+        .catch((error) =>
+          handleKyselyErrors(error)
+        )
 
-        return newHousehold
-      } catch (error) {
-        handleKyselyErrors(error)
-      }
+      return newHousehold
     }
   )

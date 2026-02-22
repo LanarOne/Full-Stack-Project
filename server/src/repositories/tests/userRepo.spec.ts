@@ -4,7 +4,10 @@ import { fakeUser } from '@server/entities/test/fakes'
 import { describe, it, expect } from 'vitest'
 import { userRepo } from '@server/repositories/userRepo'
 import { wrapInRollbacks } from '@server/tests/utils/transactions'
-import type { Insertable } from 'kysely'
+import type {
+  Insertable,
+  Updateable,
+} from 'kysely'
 import type { User } from '@server/database'
 
 const db = await wrapInRollbacks(
@@ -174,7 +177,7 @@ describe('Updates a user', () => {
     const result = await repository.update({
       id: user.id,
       name: 'some other name',
-    } as any as Partial<User>)
+    } as any as Updateable<User>)
 
     expect(result).toBeDefined()
     expect(result.name).toBe('some other name')
@@ -185,7 +188,7 @@ describe('Updates a user', () => {
       id: user.id,
       diet: 'vegan',
       profilePicture: 'http://someurl.fr',
-    } as any as Partial<User>)
+    } as any as Updateable<User>)
 
     expect(result).toBeDefined()
     expect(result.diet).toBe('vegan')
@@ -203,7 +206,7 @@ describe('Updates a user', () => {
       id: userTwo.id,
       allergies: null,
       profilePicture: null,
-    } as any as Partial<User>)
+    } as any as Updateable<User>)
 
     expect(result).toBeDefined()
     expect(result.allergies).toBe(null)
@@ -214,7 +217,7 @@ describe('Updates a user', () => {
       repository.update({
         id: 1,
         name: 'some other name',
-      } as any as Partial<User>)
+      } as any as Updateable<User>)
     ).rejects.toThrow(
       expect.objectContaining({
         message: 'no result',
@@ -245,7 +248,7 @@ describe('Updates a user', () => {
         id: user.id,
         name: 'some other name',
         newField: 'malevolent hack',
-      } as any as Partial<User>)
+      } as any as Updateable<User>)
     ).rejects.toThrow(
       expect.objectContaining({
         message: expect.stringContaining(
@@ -264,7 +267,7 @@ describe('Updates a user', () => {
         password: 'somePassword1312!',
         name: 'someName',
         newField: 'malevolent hack',
-      } as any as Partial<User>)
+      } as any as Updateable<User>)
     ).rejects.toThrow(
       expect.objectContaining({
         message: expect.stringContaining(
@@ -283,7 +286,7 @@ describe('Updates a user', () => {
         password: 'somePassword1312!',
         email: 'someother@mail.fr',
         name: 'someName',
-      } as any as Partial<User>)
+      } as any as Updateable<User>)
     ).rejects.toThrow(
       expect.objectContaining({
         message: 'Email updates are not allowed',

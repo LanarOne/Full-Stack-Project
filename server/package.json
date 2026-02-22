@@ -15,10 +15,20 @@
   "type": "module",
   "main": "index.ts",
   "scripts": {
+    "build": "tsc -p tsconfig.build.json && npx tsc-alias",
+    "coverage": "vitest run --coverage",
+    "dev": "tsx watch src",
+    "format": "prettier --write \"src/**/*/ts\"",
     "gen:types": "kysely-codegen --camel-case --dialect postgres --out-file src/database/types.ts && prettier --write src/database/types.ts",
+    "lint": "eslint ./src --ext .js,.jsx,.ts,np.tsx --fix",
     "migrate:latest": "tsx ./src/database/migrate/latest",
+    "migrate:latest:prod": "npm run node-es dist/database/migrate/latest.js",
     "migrate:new": "tsx ./src/database/migrate/new",
-    "test": "vitest"
+    "node-es": "node --import 'data:text/javascript, import { register } from \"node:module\"; import { pathToFileURL } from \"node:url\"; register(\"./loader.js\", pathToFileURL(\"./\"));'",
+    "prod": "npm run migrate:latest:prod && npm run start",
+    "start": "npm run node-es ./dist/index.js",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.8",
@@ -39,6 +49,9 @@
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^18.0.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
     "kysely-codegen": "^0.19.0",
     "prettier": "^3.7.4",
     "supertest": "^7.1.4",

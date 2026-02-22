@@ -1,4 +1,3 @@
-import { createCallerFactory, router } from '..'
 import {
   authContext,
   requestContext,
@@ -13,6 +12,7 @@ import {
   fakeMember,
   fakeUser,
 } from '@server/entities/test/fakes'
+import { createCallerFactory, router } from '..'
 
 const routes = router({
   testCall: authedHouseholdProcedure.query(
@@ -66,15 +66,13 @@ describe('Authenticated Household Procedure', () => {
   })
 
   it('should pass if user provides a valid token', async () => {
-    await insertAll(
-      db,
-      'member',
+    await insertAll(db, 'member', [
       fakeMember({
         userId: user.id,
         householdId: household.id,
         roleId: 1,
-      })
-    )
+      }),
+    ])
     const usingValidToken = createCaller({
       db,
       req: {

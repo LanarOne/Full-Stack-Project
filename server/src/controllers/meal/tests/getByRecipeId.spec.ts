@@ -50,21 +50,20 @@ const [recipeOne, recipeTwo] = await insertAll(
   ]
 )
 
-const [homeMealOne, homeMealTwo, homeMealThree] =
-  await insertAll(db, 'meal', [
-    fakeHomeMeal({
-      householdId: household.id,
-      recipeId: recipeOne.id,
-    }),
-    fakeHomeMeal({
-      householdId: household.id,
-      recipeId: recipeOne.id,
-    }),
-    fakeHomeMeal({
-      householdId: household.id,
-      recipeId: recipeTwo.id,
-    }),
-  ])
+await insertAll(db, 'meal', [
+  fakeHomeMeal({
+    householdId: household.id,
+    recipeId: recipeOne.id,
+  }),
+  fakeHomeMeal({
+    householdId: household.id,
+    recipeId: recipeOne.id,
+  }),
+  fakeHomeMeal({
+    householdId: household.id,
+    recipeId: recipeTwo.id,
+  }),
+])
 
 describe('Meal GetById Controller', () => {
   it('should throw if the user is not logged in', async () => {

@@ -4,8 +4,6 @@ import { createCallerFactory } from '@server/trpc'
 import ingredientRouter from '@server/controllers/ingredient'
 import { insertAll } from '@server/tests/utils/records'
 import {
-  aWeekAgo,
-  closeExpiryDate,
   fakeHousehold,
   fakeIngredient,
   fakeMember,

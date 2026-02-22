@@ -62,7 +62,7 @@ export function memberRepo(db: Database) {
         member
       return db
         .updateTable('member')
-        .set({ roleId: roleId })
+        .set({ roleId })
         .where('householdId', '=', householdId)
         .where('userId', '=', userId)
         .returning(memberKeysAll)

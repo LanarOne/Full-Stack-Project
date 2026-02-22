@@ -9,7 +9,7 @@ import { prepareTokenPayload } from '@server/trpc/tokenPayload'
 import jsonwebtoken from 'jsonwebtoken'
 import { handleKyselyErrors } from '@server/utils/errors'
 
-const { expiresIn, tokenKey } = config.auth
+const { tokenKey } = config.auth
 
 export default publicProcedure
   .use(provideRepos({ userRepo }))
@@ -48,12 +48,13 @@ export default publicProcedure
 
         const token = jsonwebtoken.sign(
           payload,
-          tokenKey
+          tokenKey,
+          { expiresIn: '24h' }
         )
 
         return { token }
       } catch (error) {
-        handleKyselyErrors(error)
+        return handleKyselyErrors(error)
       }
     }
   )

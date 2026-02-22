@@ -13,10 +13,13 @@ export default authedProcedure
       ctx: { repos },
     }) => {
       const { id } = householdId
-      return await repos.householdRepo
+
+      const result = await repos.householdRepo
         .findById(id)
         .catch((error: unknown) =>
           handleKyselyErrors(error)
         )
+
+      return result
     }
   )

@@ -2,7 +2,10 @@ import type {
   Database,
   User,
 } from '@server/database'
-import type { Insertable } from 'kysely'
+import type {
+  Insertable,
+  Updateable,
+} from 'kysely'
 import {
   type CreateUser,
   userKeysAll,
@@ -41,7 +44,7 @@ export function userRepo(db: Database) {
     },
 
     async update(
-      user: Partial<User>
+      user: Updateable<User>
     ): Promise<UserPublic> {
       const { id, email, ...rest } = user
       if (email !== undefined)

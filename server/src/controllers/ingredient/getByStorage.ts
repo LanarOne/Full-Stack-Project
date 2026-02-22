@@ -23,10 +23,12 @@ export default authedHouseholdProcedure
       input: { storage },
       ctx: { authHousehold, repos },
     }) => {
-      return await repos.ingredientRepo
+      const result = await repos.ingredientRepo
         .findByStorage(authHousehold!.id, storage)
         .catch((error: unknown) =>
           handleKyselyErrors(error)
         )
+
+      return result
     }
   )

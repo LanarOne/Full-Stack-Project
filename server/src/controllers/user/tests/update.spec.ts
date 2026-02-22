@@ -1,7 +1,6 @@
 import { wrapInRollbacks } from '@server/tests/utils/transactions'
 import { createTestDatabase } from '@server/tests/utils/testDatabase'
 import { createCallerFactory } from '@server/trpc'
-import userRouter from '..'
 import { describe, it, expect } from 'vitest'
 import { insertAll } from '@server/tests/utils/records'
 import { fakeUser } from '@server/entities/test/fakes'
@@ -9,6 +8,7 @@ import {
   authContext,
   requestContext,
 } from '@server/tests/utils/context'
+import userRouter from '..'
 
 const db = await wrapInRollbacks(
   createTestDatabase()
@@ -100,7 +100,7 @@ describe('User Update Controller', () => {
       update({
         id: user.id,
         email: 'someother@email.com',
-      })
+      } as any)
     ).rejects.toThrow(
       expect.objectContaining({
         name: 'TRPCError',
@@ -131,7 +131,7 @@ describe('User Update Controller', () => {
 
   it('should throw if a field is not valid', async () => {
     await expect(
-      update({ id: user.id, name: 1312 })
+      update({ id: user.id, name: 1312 } as any)
     ).rejects.toThrow(
       expect.objectContaining({
         code: 'BAD_REQUEST',

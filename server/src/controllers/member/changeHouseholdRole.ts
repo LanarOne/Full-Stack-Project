@@ -4,8 +4,6 @@ import { memberRepo } from '@server/repositories/memberRepo'
 import { memberSchema } from '@server/entities/member'
 import { handleKyselyErrors } from '@server/utils/errors'
 import { TRPCError } from '@trpc/server'
-import { isMember } from '@server/helpers/isMember'
-import { isAdmin } from '@server/helpers/isAdmin'
 import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware'
 import { enforceIsChief } from '@server/trpc/middlewares/isChiefMiddleware'
 
@@ -35,14 +33,16 @@ export default authedHouseholdProcedure
         })
       }
 
-      return await repos.memberRepo
+      const result = await repos.memberRepo
         .update({
-          userId: userId,
-          roleId: roleId,
+          userId,
+          roleId,
           householdId: authHousehold!.id,
         })
         .catch((error) =>
           handleKyselyErrors(error)
         )
+
+      return result
     }
   )

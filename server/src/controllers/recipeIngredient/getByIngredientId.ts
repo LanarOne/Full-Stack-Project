@@ -26,13 +26,16 @@ export default authedHouseholdProcedure
       input: { ingredientId },
       ctx: { repos, authHousehold },
     }) => {
-      return await repos.recipeIngredientRepo
-        .findByIngredientId(
-          ingredientId,
-          authHousehold!.id
-        )
-        .catch((error: unknown) =>
-          handleKyselyErrors(error)
-        )
+      const result =
+        await repos.recipeIngredientRepo
+          .findByIngredientId(
+            ingredientId,
+            authHousehold!.id
+          )
+          .catch((error: unknown) =>
+            handleKyselyErrors(error)
+          )
+
+      return result
     }
   )

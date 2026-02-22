@@ -16,7 +16,7 @@ export const householdSchema = z.object({
       'Name must be at most 32 characters long'
     )
     .trim(),
-  profilePicture: z.string().url(),
+  profilePicture: z.string().url().max(200),
 })
 
 export const householdKeysAll = Object.keys(

@@ -1,7 +1,6 @@
 import { wrapInRollbacks } from '@server/tests/utils/transactions'
 import { createTestDatabase } from '@server/tests/utils/testDatabase'
 import { createCallerFactory } from '@server/trpc'
-import householdRouter from '..'
 import { describe, it, expect } from 'vitest'
 import { insertAll } from '@server/tests/utils/records'
 import {
@@ -13,6 +12,7 @@ import {
   authContext,
   requestContext,
 } from '@server/tests/utils/context'
+import householdRouter from '..'
 
 const db = await wrapInRollbacks(
   createTestDatabase()
@@ -85,7 +85,8 @@ describe('Household Update Controller', () => {
     const { update } = createCaller(
       authContext(
         { db },
-        { id: user.id, email: user.email }
+        { id: user.id, email: user.email },
+        { id: 1312 }
       )
     )
 
@@ -190,6 +191,39 @@ describe('Household Update Controller', () => {
       }
     )
   )
+
+  it('should throw if the fields are not properly formatted', async () => {
+    await expect(
+      update({
+        name: 1312 as any,
+        profilePicture: 'notAnURL',
+      })
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'BAD_REQUEST',
+        name: 'TRPCError',
+        message:
+          expect.objectContaining(/invalid_url/i),
+      })
+    )
+  })
+
+  it('should throw if input has fields that are not in the database', async () => {
+    await expect(
+      update({
+        name: 'LanarOne',
+        profilePicture: 'http://url.url',
+        newField: 'malevolent hack',
+      } as any)
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'BAD_REQUEST',
+        name: 'TRPCError',
+        message:
+          expect.objectContaining(/invalid_url/i),
+      })
+    )
+  })
 
   it('should update a household correctly', async () => {
     await expect(

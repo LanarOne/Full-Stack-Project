@@ -1,7 +1,6 @@
 import { wrapInRollbacks } from '@server/tests/utils/transactions'
 import { createTestDatabase } from '@server/tests/utils/testDatabase'
 import { createCallerFactory } from '@server/trpc'
-import memberRouter from '..'
 import { insertAll } from '@server/tests/utils/records'
 import {
   fakeHousehold,
@@ -13,6 +12,7 @@ import {
   authContext,
   requestContext,
 } from '@server/tests/utils/context'
+import memberRouter from '..'
 
 const db = await wrapInRollbacks(
   createTestDatabase()
@@ -21,11 +21,11 @@ const db = await wrapInRollbacks(
 const createCaller =
   createCallerFactory(memberRouter)
 
-const [household, secondHousehold] =
-  await insertAll(db, 'household', [
-    fakeHousehold(),
-    fakeHousehold(),
-  ])
+const [household] = await insertAll(
+  db,
+  'household',
+  [fakeHousehold()]
+)
 
 const [chiefUser, guestUser] = await insertAll(
   db,

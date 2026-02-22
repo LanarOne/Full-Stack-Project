@@ -14,10 +14,12 @@ export default authedHouseholdProcedure
   .use(enforceIsGuest)
   .query(
     async ({ ctx: { authHousehold, repos } }) => {
-      return await repos.ingredientRepo
+      const result = await repos.ingredientRepo
         .findByLowQuantity(authHousehold!.id)
         .catch((error: unknown) =>
           handleKyselyErrors(error)
         )
+
+      return result
     }
   )

@@ -1,7 +1,6 @@
 import { wrapInRollbacks } from '@server/tests/utils/transactions'
 import { createTestDatabase } from '@server/tests/utils/testDatabase'
 import { createCallerFactory } from '@server/trpc'
-import inredientRouter from '..'
 import { insertAll } from '@server/tests/utils/records'
 import {
   aWeekAgo,
@@ -17,6 +16,7 @@ import {
   authContext,
   requestContext,
 } from '@server/tests/utils/context'
+import inredientRouter from '..'
 
 const db = await wrapInRollbacks(
   createTestDatabase()

@@ -125,7 +125,7 @@ describe('Recipe Get Public By ID Controller', () => {
   it('should throw if the ID is not properly formatted', async () => {
     await expect(
       getPublicById({
-        id: 'notAnId',
+        id: 'notAnId' as any,
         householdId: household.id,
       })
     ).rejects.toThrow(
@@ -144,7 +144,7 @@ describe('Recipe Get Public By ID Controller', () => {
     await expect(
       getPublicById({
         id: recipe.id,
-        householdId: 'notAnId',
+        householdId: 'notAnId' as any,
       })
     ).rejects.toThrow(
       expect.objectContaining({

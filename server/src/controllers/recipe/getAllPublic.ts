@@ -6,9 +6,11 @@ import { handleKyselyErrors } from '@server/utils/errors'
 export default authedProcedure
   .use(provideRepos({ recipeRepo }))
   .query(async ({ ctx: { repos } }) => {
-    return await repos.recipeRepo
+    const result = await repos.recipeRepo
       .findAllPublicRecipe()
       .catch((error: unknown) =>
         handleKyselyErrors(error)
       )
+
+    return result
   })

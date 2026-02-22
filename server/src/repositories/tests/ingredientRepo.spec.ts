@@ -10,7 +10,10 @@ import {
 } from '@server/entities/test/fakes'
 import { ingredientRepo } from '@server/repositories/ingredientRepo'
 import { wrapInRollbacks } from '@server/tests/utils/transactions'
-import { type Insertable, sql } from 'kysely'
+import {
+  type Insertable,
+  type Updateable,
+} from 'kysely'
 import type { Ingredient } from '@server/database'
 
 const db = await wrapInRollbacks(
@@ -784,7 +787,7 @@ describe('Updates an Ingredient', () => {
         quantity: 5,
         unit: 'unit',
         storage: 'dry storage',
-      } as any as Partial<Ingredient>,
+      } as any as Updateable<Ingredient>,
       household.id
     )
 
@@ -846,7 +849,7 @@ describe('Updates an Ingredient', () => {
           quantity: 5,
           unit: 'kilo',
           storage: 'dry storage',
-        } as any as Partial<Ingredient>,
+        } as any as Updateable<Ingredient>,
         household.id
       )
     ).rejects.toThrow(
@@ -870,7 +873,7 @@ describe('Updates an Ingredient', () => {
           quantity: 5,
           unit: 'unit',
           storage: 'outside',
-        } as any as Partial<Ingredient>,
+        } as any as Updateable<Ingredient>,
         household.id
       )
     ).rejects.toThrow(
@@ -955,7 +958,7 @@ describe('Updates an Ingredient', () => {
           type: 'veg',
           quantity: 'n4n',
           unit: 'unit',
-        } as any as Partial<Ingredient>,
+        } as any as Updateable<Ingredient>,
         household.id
       )
     ).rejects.toThrow(
@@ -979,7 +982,7 @@ describe('Updates an Ingredient', () => {
           quantity: 5,
           unit: 'unit',
           newField: 'malevolent hack',
-        } as any as Partial<Ingredient>,
+        } as any as Updateable<Ingredient>,
         household.id
       )
     ).rejects.toThrow(
@@ -1001,7 +1004,7 @@ describe('Updates an Ingredient', () => {
           name: 'carrot',
           type: 'veg',
           quantity: 5,
-        } as any as Partial<Ingredient>,
+        } as any as Updateable<Ingredient>,
         'notAnId' as any
       )
     ).rejects.toThrow(

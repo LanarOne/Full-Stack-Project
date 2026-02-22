@@ -9,7 +9,9 @@ export async function isMember({
   householdId: number
   memberRepo: MemberRepo
 }) {
-  return await memberRepo
+  const member = await memberRepo
     .findOne({ userId, householdId })
     .catch(() => null)
+
+  return member
 }

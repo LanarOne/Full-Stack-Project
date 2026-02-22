@@ -15,7 +15,8 @@ export default authedHouseholdProcedure
   .query(
     async ({ ctx: { authHousehold, repos } }) => {
       const today = new Date()
-      return await repos.ingredientRepo
+
+      const result = await repos.ingredientRepo
         .findByPassedExpiryDate(
           today,
           authHousehold!.id
@@ -23,5 +24,7 @@ export default authedHouseholdProcedure
         .catch((error: unknown) =>
           handleKyselyErrors(error)
         )
+
+      return result
     }
   )

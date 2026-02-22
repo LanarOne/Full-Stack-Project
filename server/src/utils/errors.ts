@@ -20,8 +20,8 @@ export function handleKyselyErrors(
     })
   }
 
-  if (error && error.code) {
-    switch (error.code) {
+  if ((error as any).code) {
+    switch ((error as any).code) {
       case '23503':
         throw new TRPCError({
           code: 'NOT_FOUND',
@@ -71,16 +71,15 @@ export function handleKyselyErrors(
           message:
             'No matching record found in the database',
         })
+      default:
+        throw error
     }
-
-    if (error instanceof TRPCError) throw error
   }
 
   if (error instanceof ZodError) {
     throw error
   }
 
-  console.error(error)
   throw new TRPCError({
     code: 'INTERNAL_SERVER_ERROR',
     message: 'Unexpected server error occurred.',

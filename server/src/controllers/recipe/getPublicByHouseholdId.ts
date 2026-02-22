@@ -16,12 +16,14 @@ export default authedProcedure
       input: { householdId },
       ctx: { repos },
     }) => {
-      return await repos.recipeRepo
+      const result = await repos.recipeRepo
         .findAllPublicRecipeByHousehold(
           householdId
         )
         .catch((error: unknown) =>
           handleKyselyErrors(error)
         )
+
+      return result
     }
   )

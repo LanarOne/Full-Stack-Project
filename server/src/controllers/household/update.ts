@@ -20,6 +20,7 @@ export default authedHouseholdProcedure
         name: true,
         profilePicture: true,
       })
+      .strict()
   )
   .mutation(
     async ({
@@ -28,7 +29,7 @@ export default authedHouseholdProcedure
     }) => {
       const { name, profilePicture } = input
 
-      return await repos.householdRepo
+      const result = await repos.householdRepo
         .update(authHousehold!.id, {
           name,
           profilePicture,
@@ -36,5 +37,7 @@ export default authedHouseholdProcedure
         .catch((error: unknown) =>
           handleKyselyErrors(error)
         )
+
+      return result
     }
   )

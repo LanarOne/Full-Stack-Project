@@ -30,11 +30,13 @@ export default authedHouseholdProcedure
       input: leftover,
       ctx: { repos, authHousehold },
     }) => {
-      return await repos.leftoverRepo
+      const result = await repos.leftoverRepo
         .create({
           ...leftover,
           householdId: authHousehold!.id,
         })
         .catch((err) => handleKyselyErrors(err))
+
+      return result
     }
   )

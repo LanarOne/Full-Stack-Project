@@ -14,6 +14,7 @@ export default defineConfig({
         '**/src/entities/**',
         '**/src/trpc/index.ts',
         '**/src/repositories/index.ts',
+        '**/*/index.ts',
       ],
     },
     threads: false,

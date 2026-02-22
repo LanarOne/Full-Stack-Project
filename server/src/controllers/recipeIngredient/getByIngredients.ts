@@ -32,13 +32,16 @@ export default authedHouseholdProcedure
       const ingredientIds = input.map(
         (i) => i.ingredientId
       )
-      return await repos.recipeIngredientRepo
-        .findByMultipleIngredientIds(
-          ingredientIds,
-          authHousehold!.id
-        )
-        .catch((error: unknown) =>
-          handleKyselyErrors(error)
-        )
+      const result =
+        await repos.recipeIngredientRepo
+          .findByMultipleIngredientIds(
+            ingredientIds,
+            authHousehold!.id
+          )
+          .catch((error: unknown) =>
+            handleKyselyErrors(error)
+          )
+
+      return result
     }
   )

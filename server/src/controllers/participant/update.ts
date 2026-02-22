@@ -33,8 +33,10 @@ export default authedProcedure
       input: participant,
       ctx: { repos },
     }) => {
-      return await repos.participantRepo
+      const result = await repos.participantRepo
         .update(participant)
         .catch((err) => handleKyselyErrors(err))
+
+      return result
     }
   )

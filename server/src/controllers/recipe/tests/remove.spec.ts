@@ -252,7 +252,7 @@ describe('Recipe Delete Controller', () => {
 
   it('should throw if a field is not properly formatted', async () => {
     await expect(
-      remove({ id: 'notAnId' })
+      remove({ id: 'notAnId' as any })
     ).rejects.toThrow(
       expect.objectContaining({
         code: 'BAD_REQUEST',

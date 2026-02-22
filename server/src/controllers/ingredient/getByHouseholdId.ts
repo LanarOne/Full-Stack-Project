@@ -12,10 +12,12 @@ export default authedHouseholdProcedure
   .use(enforceIsMember)
   .query(
     async ({ ctx: { authHousehold, repos } }) => {
-      return await repos.ingredientRepo
+      const result = await repos.ingredientRepo
         .findByHouseholdId(authHousehold!.id)
         .catch((error: unknown) =>
           handleKyselyErrors(error)
         )
+
+      return result
     }
   )

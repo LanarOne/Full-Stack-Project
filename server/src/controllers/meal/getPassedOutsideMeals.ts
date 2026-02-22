@@ -12,10 +12,12 @@ export default authedHouseholdProcedure
   .use(enforceIsGuest)
   .query(
     async ({ ctx: { authHousehold, repos } }) => {
-      return await repos.mealRepo
+      const result = await repos.mealRepo
         .findPassedOutsideMeals(authHousehold!.id)
         .catch((error: unknown) =>
           handleKyselyErrors(error)
         )
+
+      return result
     }
   )

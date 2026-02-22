@@ -41,8 +41,10 @@ export default authedHouseholdProcedure
       input: recipe,
       ctx: { repos, authHousehold },
     }) => {
-      return await repos.recipeRepo
-        .update(recipe, authHousehold.id)
+      const result = await repos.recipeRepo
+        .update(recipe, authHousehold!.id)
         .catch((err) => handleKyselyErrors(err))
+
+      return result
     }
   )

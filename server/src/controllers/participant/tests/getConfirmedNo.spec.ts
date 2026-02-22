@@ -7,7 +7,6 @@ import {
   fakeHomeMeal,
   fakeHousehold,
   fakeMember,
-  fakeOutsideMeal,
   fakeParticipant,
   fakeRecipe,
   fakeUser,
