@@ -5,7 +5,7 @@ import {
   PostgresDialect,
 } from 'kysely'
 import pg from 'pg'
-import type { DB } from '@server/database/types'
+import type { DB } from './types.js'
 
 export function createDatabase(
   options: pg.PoolConfig

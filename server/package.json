@@ -27,6 +27,7 @@
     "node-es": "node --import 'data:text/javascript, import { register } from \"node:module\"; import { pathToFileURL } from \"node:url\"; register(\"./loader.js\", pathToFileURL(\"./\"));'",
     "prod": "npm run migrate:latest:prod && npm run start",
     "start": "npm run node-es ./dist/index.js",
+    "start:again": "node ./dist/index.js",
     "test": "vitest",
     "typecheck": "tsc --noEmit"
   },
@@ -63,6 +64,7 @@
   "dependencies": {
     "@trpc/server": "^11.8.1",
     "@types/lodash-es": "^4.17.12",
+    "copy-anything": "^4.0.5",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",

@@ -1,6 +1,6 @@
-import { createDatabase } from '@server/database'
-import config from '@server/config'
-import createApp from '@server/app'
+import { createDatabase } from './database/index.js'
+import config from './config.js'
+import createApp from './app.js'
 
 const database = createDatabase(config.database)
 const app = createApp(database)

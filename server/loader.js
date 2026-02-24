@@ -23,6 +23,14 @@ export async function resolve(
     return next(specifier, context)
   }
 
+  const isAlias =
+    specifier.startsWith('@server/') ||
+    specifier.startsWith('@tests/')
+
+  if (!isAlias) {
+    return next(specifier, context)
+  }
+
   if (specifier === 'kysely') {
     return next(specifier, context)
   }
