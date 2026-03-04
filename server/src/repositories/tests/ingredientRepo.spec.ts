@@ -46,9 +46,9 @@ describe('Creates a new ingredient', () => {
         type: 'vegetable',
         quantity: 2,
         unit: 'unit',
-        purchaseDate: new Date('2025-12-25')
-          .toISOString()
-          .slice(0, 10),
+        purchaseDate: new Date('2025-12-25'),
+        // .toISOString()
+        // .slice(0, 10),
         expiryDate: new Date('2026-01-15')
           .toISOString()
           .slice(0, 10),
