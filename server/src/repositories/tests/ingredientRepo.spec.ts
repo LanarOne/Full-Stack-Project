@@ -46,9 +46,9 @@ describe('Creates a new ingredient', () => {
         type: 'vegetable',
         quantity: 2,
         unit: 'unit',
-        purchaseDate: new Date('2025-12-25'),
-        // .toISOString()
-        // .slice(0, 10),
+        purchaseDate: new Date('2025-12-25')
+          .toISOString()
+          .slice(0, 10),
         expiryDate: new Date('2026-01-15')
           .toISOString()
           .slice(0, 10),
@@ -64,12 +64,6 @@ describe('Creates a new ingredient', () => {
         type: 'vegetable',
         quantity: 2,
         unit: 'unit',
-        purchaseDate: new Date(
-          '2025-12-24T23:00:00.000Z'
-        ),
-        expiryDate: new Date(
-          '2026-01-14T23:00:00.000Z'
-        ),
         householdId: household.id,
         storage: 'fridge',
       })
@@ -104,12 +98,6 @@ describe('Creates a new ingredient', () => {
         type: 'vegetable',
         quantity: 2,
         unit: 'unit',
-        purchaseDate: new Date(
-          '2025-12-24T23:00:00.000Z'
-        ),
-        expiryDate: new Date(
-          '2026-01-14T23:00:00.000Z'
-        ),
         householdId: household.id,
         notifInterval: 5,
         nextNotif: new Date('2026-01-20'),
