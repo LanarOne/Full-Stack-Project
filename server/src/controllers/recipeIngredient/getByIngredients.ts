@@ -1,11 +1,11 @@
-import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure'
-import provideRepos from '@server/trpc/provideRepos'
-import { recipeIngredientRepo } from '@server/repositories/recipeIngredientRepo'
-import { memberRepo } from '@server/repositories/memberRepo'
-import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware'
-import { enforceIsGuest } from '@server/trpc/middlewares/isGuestMiddleware'
-import { handleKyselyErrors } from '@server/utils/errors'
-import { recipeIngredientSchema } from '@server/entities/recipeIngredient'
+import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure/index.js'
+import provideRepos from '@server/trpc/provideRepos/index.js'
+import { recipeIngredientRepo } from '@server/repositories/recipeIngredientRepo.js'
+import { memberRepo } from '@server/repositories/memberRepo.js'
+import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware.js'
+import { enforceIsGuest } from '@server/trpc/middlewares/isGuestMiddleware.js'
+import { handleKyselyErrors } from '@server/utils/errors.js'
+import { recipeIngredientSchema } from '@server/entities/recipeIngredient.js'
 import { z } from 'zod'
 
 export default authedHouseholdProcedure
@@ -24,24 +24,19 @@ export default authedHouseholdProcedure
         .strict()
     )
   )
-  .query(
-    async ({
-      input,
-      ctx: { repos, authHousehold },
-    }) => {
-      const ingredientIds = input.map(
-        (i) => i.ingredientId
-      )
-      const result =
-        await repos.recipeIngredientRepo
-          .findByMultipleIngredientIds(
-            ingredientIds,
-            authHousehold!.id
-          )
-          .catch((error: unknown) =>
-            handleKyselyErrors(error)
-          )
+  .query(async ({ input, ctx }) => {
+    const ingredientIds = input.map(
+      (i) => i.ingredientId
+    )
+    const result =
+      await ctx.repos.recipeIngredientRepo
+        .findByMultipleIngredientIds(
+          ingredientIds,
+          ctx.authHousehold!.id
+        )
+        .catch((error: unknown) =>
+          handleKyselyErrors(error)
+        )
 
-      return result
-    }
-  )
+    return result
+  })

@@ -1,4 +1,4 @@
-import type { MemberRepo } from '@server/repositories/memberRepo'
+import type { MemberRepo } from '@server/repositories/memberRepo.js'
 
 export async function isGuest({
   userId,

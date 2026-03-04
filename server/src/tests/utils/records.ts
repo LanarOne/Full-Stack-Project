@@ -1,4 +1,4 @@
-import type { DB } from '@server/database'
+import type { DB } from '@server/database/types.js'
 import {
   type ExpressionOrFactory,
   type Insertable,

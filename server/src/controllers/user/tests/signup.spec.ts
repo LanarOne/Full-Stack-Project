@@ -1,10 +1,10 @@
-import { wrapInRollbacks } from '@server/tests/utils/transactions'
-import { createTestDatabase } from '@server/tests/utils/testDatabase'
-import { createCallerFactory } from '@server/trpc'
+import { wrapInRollbacks } from '@server/tests/utils/transactions/index.js'
+import { createTestDatabase } from '@server/tests/utils/testDatabase.js'
+import { createCallerFactory } from '@server/trpc/index.js'
 import { describe, expect, it } from 'vitest'
-import { fakeUser } from '@server/entities/test/fakes'
-import { selectAll } from '@server/tests/utils/records'
-import userRouter from '..'
+import { fakeUser } from '@server/entities/test/fakes.js'
+import { selectAll } from '@server/tests/utils/records.js'
+import userRouter from '../index.js'
 
 const db = await wrapInRollbacks(
   createTestDatabase()

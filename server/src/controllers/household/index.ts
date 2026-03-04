@@ -1,7 +1,7 @@
-import { router } from '@server/trpc'
-import create from './create'
-import getById from './getById'
-import update from './update'
+import { router } from '@server/trpc/index.js'
+import create from './create.js'
+import getById from './getById.js'
+import update from './update.js'
 
 export default router({
   create,

@@ -1,16 +1,16 @@
-import { wrapInRollbacks } from '@server/tests/utils/transactions'
-import { createTestDatabase } from '@server/tests/utils/testDatabase'
-import { recipeIngredientRepo } from '@server/repositories/recipeIngredientRepo'
-import { insertAll } from '@server/tests/utils/records'
+import { wrapInRollbacks } from '@server/tests/utils/transactions/index.js'
+import { createTestDatabase } from '@server/tests/utils/testDatabase.js'
+import { recipeIngredientRepo } from '@server/repositories/recipeIngredientRepo.js'
+import { insertAll } from '@server/tests/utils/records.js'
 import {
   fakeHousehold,
   fakeIngredient,
   fakeRcpIngr,
   fakeRecipe,
-} from '@server/entities/test/fakes'
+} from '@server/entities/test/fakes.js'
 import { describe, it, expect } from 'vitest'
 import type { Insertable } from 'kysely'
-import type { RcpIngr } from '@server/database'
+import type { RcpIngr } from '@server/database/types.js'
 
 const db = await wrapInRollbacks(
   createTestDatabase()

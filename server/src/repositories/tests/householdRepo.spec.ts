@@ -1,9 +1,9 @@
-import { createTestDatabase } from '@server/tests/utils/testDatabase'
+import { createTestDatabase } from '@server/tests/utils/testDatabase.js'
 import { describe, expect, it } from 'vitest'
-import { insertAll } from '@server/tests/utils/records'
-import { householdRepo } from '@server/repositories/householdRepo'
-import { fakeHousehold } from '@server/entities/test/fakes'
-import { wrapInRollbacks } from '@server/tests/utils/transactions'
+import { insertAll } from '@server/tests/utils/records.js'
+import { householdRepo } from '@server/repositories/householdRepo.js'
+import { fakeHousehold } from '@server/entities/test/fakes.js'
+import { wrapInRollbacks } from '@server/tests/utils/transactions/index.js'
 
 const db = await wrapInRollbacks(
   createTestDatabase()

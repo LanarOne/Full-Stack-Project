@@ -1,7 +1,7 @@
 import type {
   Database,
   Participant,
-} from '@server/database'
+} from '@server/database/index.js'
 import type {
   Insertable,
   Updateable,
@@ -9,7 +9,7 @@ import type {
 import {
   participantKeysAll,
   type ParticipantPublic,
-} from '@server/entities/participant'
+} from '@server/entities/participant.js'
 
 export function participantRepo(db: Database) {
   return {

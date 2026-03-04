@@ -1,13 +1,13 @@
-import config from '@server/config'
-import { publicProcedure } from '@server/trpc'
-import provideRepos from '@server/trpc/provideRepos'
-import { userRepo } from '@server/repositories/userRepo'
-import { userSchema } from '@server/entities/user'
+import config from '@server/config.js'
+import { publicProcedure } from '@server/trpc/index.js'
+import provideRepos from '@server/trpc/provideRepos/index.js'
+import { userRepo } from '@server/repositories/userRepo.js'
+import { userSchema } from '@server/entities/user.js'
 import { TRPCError } from '@trpc/server'
 import bcrypt from 'bcrypt'
-import { prepareTokenPayload } from '@server/trpc/tokenPayload'
+import { prepareTokenPayload } from '@server/trpc/tokenPayload.js'
 import jsonwebtoken from 'jsonwebtoken'
-import { handleKyselyErrors } from '@server/utils/errors'
+import { handleKyselyErrors } from '@server/utils/errors.js'
 
 const { tokenKey } = config.auth
 
@@ -22,11 +22,13 @@ export default publicProcedure
   .mutation(
     async ({
       input: { email, password },
-      ctx: { repos },
+      ctx,
     }) => {
       try {
         const user =
-          await repos.userRepo.findByEmail(email)
+          await ctx.repos.userRepo.findByEmail(
+            email
+          )
 
         const passwordMatch =
           await bcrypt.compare(
@@ -49,7 +51,9 @@ export default publicProcedure
         const token = jsonwebtoken.sign(
           payload,
           tokenKey,
-          { expiresIn: '24h' }
+          {
+            expiresIn: config.auth.expiresIn,
+          } as jsonwebtoken.SignOptions
         )
 
         return { token }

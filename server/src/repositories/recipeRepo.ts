@@ -1,7 +1,7 @@
 import type {
   Database,
   Recipe,
-} from '@server/database'
+} from '@server/database/index.js'
 import type {
   Insertable,
   Updateable,
@@ -11,7 +11,7 @@ import {
   recipeKeysAll,
   recipeKeysPublic,
   type RecipePublic,
-} from '@server/entities/recipe'
+} from '@server/entities/recipe.js'
 
 export function recipeRepo(db: Database) {
   return {

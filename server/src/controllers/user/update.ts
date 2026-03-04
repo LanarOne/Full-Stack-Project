@@ -1,15 +1,14 @@
-import provideRepos from '@server/trpc/provideRepos'
-import { authedProcedure } from '@server/trpc/authedProcedure'
-import { userSchema } from '@server/entities/user'
-import { userRepo } from '@server/repositories/userRepo'
-import { handleKyselyErrors } from '@server/utils/errors'
+import provideRepos from '@server/trpc/provideRepos/index.js'
+import { authedProcedure } from '@server/trpc/authedProcedure/index.js'
+import { userSchema } from '@server/entities/user.js'
+import { userRepo } from '@server/repositories/userRepo.js'
+import { handleKyselyErrors } from '@server/utils/errors.js'
 
 export default authedProcedure
   .use(provideRepos({ userRepo }))
   .input(
     userSchema
       .pick({
-        id: true,
         name: true,
         diet: true,
         allergies: true,
@@ -21,21 +20,19 @@ export default authedProcedure
       })
       .strict()
   )
-  .mutation(
-    async ({ input: user, ctx: { repos } }) => {
-      const { id, name, diet, allergies } = user
+  .mutation(async ({ input: user, ctx }) => {
+    const { name, diet, allergies } = user
 
-      const result = await repos.userRepo
-        .update({
-          id,
-          name,
-          diet,
-          allergies,
-        })
-        .catch((error) =>
-          handleKyselyErrors(error)
-        )
+    const result = await ctx.repos.userRepo
+      .update({
+        id: ctx.authUser.id,
+        name,
+        diet,
+        allergies,
+      })
+      .catch((error: unknown) =>
+        handleKyselyErrors(error)
+      )
 
-      return result
-    }
-  )
+    return result
+  })

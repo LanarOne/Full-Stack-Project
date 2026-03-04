@@ -1,6 +1,6 @@
 import { Kysely, Transaction } from 'kysely'
-import beginTransaction from './beginTransaction'
-import createSavePoint from './createSavePoint'
+import beginTransaction from './beginTransaction.js'
+import createSavePoint from './createSavePoint.js'
 
 // NOTE: This module has been added to the template to allow using rollbacked
 // tests without the need to restructure the tests or think about transactions
@@ -16,7 +16,10 @@ const symbolOverride = Symbol('override')
 type DatabaseProxy<T, N extends T = any> = T & {
   [symbolOriginal]: T
   [symbolSetInstance]: (replacement: N) => void
-  [symbolOverride]: (name: keyof T, value: any) => void
+  [symbolOverride]: (
+    name: keyof T,
+    value: any
+  ) => void
 }
 
 /**
@@ -27,11 +30,14 @@ type DatabaseProxy<T, N extends T = any> = T & {
  * This must be run before any database queries that you want to be
  * rollbacked after the test suite.
  */
-export async function wrapInRollbacks<T = any, K extends Kysely<T> = any>(
-  db: K
-): Promise<K> {
+export async function wrapInRollbacks<
+  T = any,
+  K extends Kysely<T> = any,
+>(db: K): Promise<K> {
   const dbProxy = wrapInProxy(db)
-  const transaction = await beginTransaction(dbProxy[symbolOriginal])
+  const transaction = await beginTransaction(
+    dbProxy[symbolOriginal]
+  )
 
   // Swap out the database instance with the transaction instance.
   dbProxy[symbolSetInstance](transaction.trx)
@@ -44,22 +50,30 @@ export async function wrapInRollbacks<T = any, K extends Kysely<T> = any>(
     // Override the transaction method to use savepoints for nested transactions.
     // This allows using transactions inside our application code without
     // worrying about the test suite's transaction.
-    dbProxy[symbolOverride]('transaction', () => ({
-      isTransaction: () => true,
-      execute: async <N>(fn: (trx: Transaction<T>) => N) => {
-        const innerState = createSavePoint(dbProxy)
-        await innerState.save()
+    dbProxy[symbolOverride](
+      'transaction',
+      () => ({
+        isTransaction: () => true,
+        execute: async <N>(
+          fn: (trx: Transaction<T>) => N
+        ) => {
+          const innerState =
+            createSavePoint(dbProxy)
+          await innerState.save()
 
-        try {
-          const result = await fn(dbProxy as any)
-          await innerState.release()
-          return result
-        } catch (error) {
-          await innerState.rollback()
-          throw error
-        }
-      },
-    }))
+          try {
+            const result = await fn(
+              dbProxy as any
+            )
+            await innerState.release()
+            return result
+          } catch (error) {
+            await innerState.rollback()
+            throw error
+          }
+        },
+      })
+    )
 
     // Vitest uses the returned function in the afterEach hook
     return preTestState.rollback
@@ -76,9 +90,10 @@ export async function wrapInRollbacks<T = any, K extends Kysely<T> = any>(
  * This allows the same database instance to be used for multiple tests
  * without having to create a new instance for each test.
  */
-function wrapInProxy<T extends object, N extends T>(
-  dbBase: T
-): DatabaseProxy<T> {
+function wrapInProxy<
+  T extends object,
+  N extends T,
+>(dbBase: T): DatabaseProxy<T> {
   let instance = dbBase
   const overrides = new Map()
 
@@ -102,9 +117,12 @@ function wrapInProxy<T extends object, N extends T>(
         return overrides.get(prop)
       }
 
-      const value = instance[prop as keyof typeof instance]
+      const value =
+        instance[prop as keyof typeof instance]
 
-      return typeof value === 'function' ? value.bind(instance) : value
+      return typeof value === 'function'
+        ? value.bind(instance)
+        : value
     },
   }) as DatabaseProxy<T>
 }

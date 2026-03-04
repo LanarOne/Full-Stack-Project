@@ -1,11 +1,11 @@
-import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure'
-import provideRepos from '@server/trpc/provideRepos'
-import { recipeIngredientRepo } from '@server/repositories/recipeIngredientRepo'
-import { memberRepo } from '@server/repositories/memberRepo'
-import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware'
-import { enforceIsGuest } from '@server/trpc/middlewares/isGuestMiddleware'
-import { handleKyselyErrors } from '@server/utils/errors'
-import { recipeIngredientSchema } from '@server/entities/recipeIngredient'
+import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure/index.js'
+import provideRepos from '@server/trpc/provideRepos/index.js'
+import { recipeIngredientRepo } from '@server/repositories/recipeIngredientRepo.js'
+import { memberRepo } from '@server/repositories/memberRepo.js'
+import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware.js'
+import { enforceIsGuest } from '@server/trpc/middlewares/isGuestMiddleware.js'
+import { handleKyselyErrors } from '@server/utils/errors.js'
+import { recipeIngredientSchema } from '@server/entities/recipeIngredient.js'
 
 export default authedHouseholdProcedure
   .use(
@@ -21,21 +21,16 @@ export default authedHouseholdProcedure
       .pick({ recipeId: true })
       .strict()
   )
-  .query(
-    async ({
-      input: { recipeId },
-      ctx: { repos, authHousehold },
-    }) => {
-      const result =
-        await repos.recipeIngredientRepo
-          .findByRecipeId(
-            recipeId,
-            authHousehold!.id
-          )
-          .catch((error: unknown) =>
-            handleKyselyErrors(error)
-          )
+  .query(async ({ input: { recipeId }, ctx }) => {
+    const result =
+      await ctx.repos.recipeIngredientRepo
+        .findByRecipeId(
+          recipeId,
+          ctx.authHousehold!.id
+        )
+        .catch((error: unknown) =>
+          handleKyselyErrors(error)
+        )
 
-      return result
-    }
-  )
+    return result
+  })

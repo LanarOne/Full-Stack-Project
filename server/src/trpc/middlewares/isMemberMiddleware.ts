@@ -1,5 +1,5 @@
-import { middleware } from '@server/trpc'
-import { isMember } from '@server/helpers/isMember'
+import { middleware } from '@server/trpc/index.js'
+import { isMember } from '@server/helpers/isMember.js'
 import { TRPCError } from '@trpc/server'
 
 export const enforceIsMember = middleware(

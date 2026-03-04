@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { idSchema } from '@server/entities/shared'
-import type { Role } from '@server/database'
+import { idSchema } from '@server/entities/shared.js'
+import type { Role } from '@server/database/types.js'
 import type { Selectable } from 'kysely'
 
 const roles = [

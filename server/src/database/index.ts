@@ -23,4 +23,4 @@ export function createDatabase(
 
 export type Database = Kysely<DB>
 export type DatabasePartial<T> = Kysely<T>
-export * from './types'
+export * from './types.js'

@@ -1,13 +1,13 @@
-import { router } from '../trpc'
-import user from './user'
-import household from './household'
-import member from './member'
-import recipe from './recipe'
-import recipeIngredient from './recipeIngredient'
-import ingredient from './ingredient'
-import meal from './meal'
-import leftover from './leftover'
-import participant from './participant'
+import { router } from '../trpc/index.js'
+import user from './user/index.js'
+import household from './household/index.js'
+import member from './member/index.js'
+import recipe from './recipe/index.js'
+import recipeIngredient from './recipeIngredient/index.js'
+import ingredient from './ingredient/index.js'
+import meal from './meal/index.js'
+import leftover from './leftover/index.js'
+import participant from './participant/index.js'
 
 export const appRouter = router({
   household,

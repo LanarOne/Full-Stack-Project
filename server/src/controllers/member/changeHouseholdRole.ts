@@ -1,11 +1,11 @@
-import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure'
-import provideRepos from '@server/trpc/provideRepos'
-import { memberRepo } from '@server/repositories/memberRepo'
-import { memberSchema } from '@server/entities/member'
-import { handleKyselyErrors } from '@server/utils/errors'
+import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure/index.js'
+import provideRepos from '@server/trpc/provideRepos/index.js'
+import { memberRepo } from '@server/repositories/memberRepo.js'
+import { memberSchema } from '@server/entities/member.js'
+import { handleKyselyErrors } from '@server/utils/errors.js'
 import { TRPCError } from '@trpc/server'
-import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware'
-import { enforceIsChief } from '@server/trpc/middlewares/isChiefMiddleware'
+import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware.js'
+import { enforceIsChief } from '@server/trpc/middlewares/isChiefMiddleware.js'
 
 export default authedHouseholdProcedure
   .use(provideRepos({ memberRepo }))
@@ -19,30 +19,25 @@ export default authedHouseholdProcedure
       })
       .strict()
   )
-  .mutation(
-    async ({
-      input,
-      ctx: { repos, authUser, authHousehold },
-    }) => {
-      const { userId, roleId } = input
-      if (authUser.id === userId) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message:
-            'You cannot modify your own role',
-        })
-      }
-
-      const result = await repos.memberRepo
-        .update({
-          userId,
-          roleId,
-          householdId: authHousehold!.id,
-        })
-        .catch((error) =>
-          handleKyselyErrors(error)
-        )
-
-      return result
+  .mutation(async ({ input, ctx }) => {
+    const { userId, roleId } = input
+    if (ctx.authUser.id === userId) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message:
+          'You cannot modify your own role',
+      })
     }
-  )
+
+    const result = await ctx.repos.memberRepo
+      .update({
+        userId,
+        roleId,
+        householdId: ctx.authHousehold!.id,
+      })
+      .catch((error: unknown) =>
+        handleKyselyErrors(error)
+      )
+
+    return result
+  })

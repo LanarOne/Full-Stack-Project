@@ -1,11 +1,11 @@
-import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure'
-import provideRepos from '@server/trpc/provideRepos'
-import { memberRepo } from '@server/repositories/memberRepo'
-import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware'
-import { enforceIsGuest } from '@server/trpc/middlewares/isGuestMiddleware'
-import { handleKyselyErrors } from '@server/utils/errors'
-import { participantRepo } from '@server/repositories/participantRepo'
-import { participantSchema } from '@server/entities/participant'
+import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure/index.js'
+import provideRepos from '@server/trpc/provideRepos/index.js'
+import { memberRepo } from '@server/repositories/memberRepo.js'
+import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware.js'
+import { enforceIsGuest } from '@server/trpc/middlewares/isGuestMiddleware.js'
+import { handleKyselyErrors } from '@server/utils/errors.js'
+import { participantRepo } from '@server/repositories/participantRepo.js'
+import { participantSchema } from '@server/entities/participant.js'
 
 export default authedHouseholdProcedure
   .use(
@@ -31,15 +31,15 @@ export default authedHouseholdProcedure
       .strict()
   )
   .mutation(
-    async ({
-      input: participant,
-      ctx: { repos },
-    }) => {
-      const result = await repos.participantRepo
-        .create({
-          ...participant,
-        })
-        .catch((err) => handleKyselyErrors(err))
+    async ({ input: participant, ctx }) => {
+      const result =
+        await ctx.repos.participantRepo
+          .create({
+            ...participant,
+          })
+          .catch((err: unknown) =>
+            handleKyselyErrors(err)
+          )
 
       return result
     }

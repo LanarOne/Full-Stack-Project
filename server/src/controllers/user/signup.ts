@@ -1,35 +1,46 @@
-import { publicProcedure } from '@server/trpc'
-import provideRepos from '@server/trpc/provideRepos'
-import { userRepo } from '@server/repositories/userRepo'
-import { userSchema } from '@server/entities/user'
+import { publicProcedure } from '@server/trpc/index.js'
+import provideRepos from '@server/trpc/provideRepos/index.js'
+import { userRepo } from '@server/repositories/userRepo.js'
+import { userSchema } from '@server/entities/user.js'
 import { hash } from 'bcrypt'
-import config from '@server/config'
-import { handleKyselyErrors } from '@server/utils/errors'
+import config from '@server/config.js'
+import { handleKyselyErrors } from '@server/utils/errors.js'
 
 export default publicProcedure
   .use(provideRepos({ userRepo }))
   .input(
-    userSchema.pick({
-      email: true,
-      password: true,
-      name: true,
-      diet: true,
-      allergies: true,
-    })
+    userSchema
+      .pick({
+        email: true,
+        password: true,
+        name: true,
+        diet: true,
+        allergies: true,
+        profilePicture: true,
+      })
+      .partial({
+        diet: true,
+        allergies: true,
+        profilePicture: true,
+      })
+      .strict()
   )
   .mutation(
-    async ({ input: user, ctx: { repos } }) => {
+    async ({
+      input: user,
+      ctx,
+    }): Promise<{ id: number }> => {
       const passwordHash = await hash(
-        user.password,
+        user.password!,
         config.auth.passwordCost
       )
 
-      const created = await repos.userRepo
+      const created = await ctx.repos.userRepo
         .create({
           ...user,
           password: passwordHash,
         })
-        .catch((error) =>
+        .catch((error: unknown) =>
           handleKyselyErrors(error)
         )
 

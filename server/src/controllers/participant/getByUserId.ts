@@ -1,8 +1,8 @@
-import provideRepos from '@server/trpc/provideRepos'
-import { memberRepo } from '@server/repositories/memberRepo'
-import { handleKyselyErrors } from '@server/utils/errors'
-import { participantRepo } from '@server/repositories/participantRepo'
-import { authedProcedure } from '@server/trpc/authedProcedure'
+import provideRepos from '@server/trpc/provideRepos/index.js'
+import { memberRepo } from '@server/repositories/memberRepo.js'
+import { handleKyselyErrors } from '@server/utils/errors.js'
+import { participantRepo } from '@server/repositories/participantRepo.js'
+import { authedProcedure } from '@server/trpc/authedProcedure/index.js'
 
 export default authedProcedure
   .use(
@@ -11,12 +11,10 @@ export default authedProcedure
       participantRepo,
     })
   )
-  .mutation(
-    async ({ ctx: { repos, authUser } }) => {
-      const result = await repos.participantRepo
-        .findByUserId(authUser.id)
-        .catch((err) => handleKyselyErrors(err))
+  .mutation(async ({ ctx }) => {
+    const result = await ctx.repos.participantRepo
+      .findByUserId(ctx.authUser.id)
+      .catch((err) => handleKyselyErrors(err))
 
-      return result
-    }
-  )
+    return result
+  })

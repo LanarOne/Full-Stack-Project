@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { idSchema } from '@server/entities/shared'
-import type { Participant } from '@server/database'
+import { idSchema } from '@server/entities/shared.js'
+import type { Participant } from '@server/database/types.js'
 import type { Selectable } from 'kysely'
 
 export const participantSchema = z.object({

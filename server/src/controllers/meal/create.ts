@@ -1,12 +1,12 @@
-import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure'
-import provideRepos from '@server/trpc/provideRepos'
-import { memberRepo } from '@server/repositories/memberRepo'
-import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware'
-import { enforceIsGuest } from '@server/trpc/middlewares/isGuestMiddleware'
-import { handleKyselyErrors } from '@server/utils/errors'
-import { recipeRepo } from '@server/repositories/recipeRepo'
-import { mealSchema } from '@server/entities/meal'
-import { mealRepo } from '@server/repositories/mealRepo'
+import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure/index.js'
+import provideRepos from '@server/trpc/provideRepos/index.js'
+import { memberRepo } from '@server/repositories/memberRepo.js'
+import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware.js'
+import { enforceIsGuest } from '@server/trpc/middlewares/isGuestMiddleware.js'
+import { handleKyselyErrors } from '@server/utils/errors.js'
+import { recipeRepo } from '@server/repositories/recipeRepo.js'
+import { mealSchema } from '@server/entities/meal.js'
+import { mealRepo } from '@server/repositories/mealRepo.js'
 
 export default authedHouseholdProcedure
   .use(
@@ -32,18 +32,13 @@ export default authedHouseholdProcedure
       })
       .strict()
   )
-  .mutation(
-    async ({
-      input: meal,
-      ctx: { repos, authHousehold },
-    }) => {
-      const result = await repos.mealRepo
-        .create({
-          ...meal,
-          householdId: authHousehold!.id,
-        })
-        .catch((err) => handleKyselyErrors(err))
+  .mutation(async ({ input: meal, ctx }) => {
+    const result = await ctx.repos.mealRepo
+      .create({
+        ...meal,
+        householdId: ctx.authHousehold!.id,
+      })
+      .catch((err) => handleKyselyErrors(err))
 
-      return result
-    }
-  )
+    return result
+  })

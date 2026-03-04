@@ -1,20 +1,20 @@
-import { wrapInRollbacks } from '@server/tests/utils/transactions'
-import { createTestDatabase } from '@server/tests/utils/testDatabase'
-import { insertAll } from '@server/tests/utils/records'
+import { wrapInRollbacks } from '@server/tests/utils/transactions/index.js'
+import { createTestDatabase } from '@server/tests/utils/testDatabase.js'
+import { insertAll } from '@server/tests/utils/records.js'
 import {
   fakeHomeMeal,
   fakeHousehold,
   fakeLeftover,
   fakeOutsideMeal,
   fakeRecipe,
-} from '@server/entities/test/fakes'
+} from '@server/entities/test/fakes.js'
 import { describe, it, expect } from 'vitest'
-import { leftoverRepo } from '@server/repositories/leftoverRepo'
+import { leftoverRepo } from '@server/repositories/leftoverRepo.js'
 import type {
   Insertable,
   Updateable,
 } from 'kysely'
-import type { Leftover } from '@server/database'
+import type { Leftover } from '@server/database/index.js'
 
 const db = await wrapInRollbacks(
   createTestDatabase()

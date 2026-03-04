@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { idSchema } from '@server/entities/shared'
-import type { User } from '@server/database'
+import { idSchema } from '@server/entities/shared.js'
+import type { User } from '@server/database/types.js'
 import type {
   Insertable,
   Selectable,

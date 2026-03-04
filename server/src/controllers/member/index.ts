@@ -1,10 +1,10 @@
-import { router } from '@server/trpc'
-import create from './create'
-import getOne from './getOne'
-import getByHouseholdId from './getByHouseholdId'
-import getByUserId from './getByUserId'
-import changeHouseholdRole from './changeHouseholdRole'
-import remove from './remove'
+import { router } from '@server/trpc/index.js'
+import create from './create.js'
+import getOne from './getOne.js'
+import getByHouseholdId from './getByHouseholdId.js'
+import getByUserId from './getByUserId.js'
+import changeHouseholdRole from './changeHouseholdRole.js'
+import remove from './remove.js'
 
 export default router({
   create,

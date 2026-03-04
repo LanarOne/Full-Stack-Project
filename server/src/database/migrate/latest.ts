@@ -9,8 +9,8 @@ import {
   type Kysely,
   type MigrationProvider,
 } from 'kysely'
-import { createDatabase } from '@server/database'
-import config from '@server/config'
+import { createDatabase } from '@server/database/index.js'
+import config from '@server/config.js'
 
 const MIGRATION_PATH = '../migrations'
 

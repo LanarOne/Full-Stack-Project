@@ -1,12 +1,12 @@
 import type {
   Database,
   Member,
-} from '@server/database'
+} from '@server/database/index.js'
 import type { Insertable } from 'kysely'
 import {
   memberKeysAll,
   type MemberPublic,
-} from '@server/entities/member'
+} from '@server/entities/member.js'
 
 export function memberRepo(db: Database) {
   return {

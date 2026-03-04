@@ -1,14 +1,14 @@
-import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure'
-import provideRepos from '@server/trpc/provideRepos'
-import { recipeRepo } from '@server/repositories/recipeRepo'
-import { memberRepo } from '@server/repositories/memberRepo'
-import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware'
-import { enforceIsGuest } from '@server/trpc/middlewares/isGuestMiddleware'
+import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure/index.js'
+import provideRepos from '@server/trpc/provideRepos/index.js'
+import { recipeRepo } from '@server/repositories/recipeRepo.js'
+import { memberRepo } from '@server/repositories/memberRepo.js'
+import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware.js'
+import { enforceIsGuest } from '@server/trpc/middlewares/isGuestMiddleware.js'
 import {
   type RecipePublic,
   recipeSchema,
-} from '@server/entities/recipe'
-import { handleKyselyErrors } from '@server/utils/errors'
+} from '@server/entities/recipe.js'
+import { handleKyselyErrors } from '@server/utils/errors.js'
 
 export default authedHouseholdProcedure
   .use(provideRepos({ recipeRepo, memberRepo }))
@@ -20,12 +20,12 @@ export default authedHouseholdProcedure
   .query(
     async ({
       input: { prepTime },
-      ctx: { repos, authHousehold },
+      ctx,
     }): Promise<RecipePublic[]> => {
-      const result = await repos.recipeRepo
+      const result = await ctx.repos.recipeRepo
         .findByPrepTime(
           prepTime,
-          authHousehold!.id
+          ctx.authHousehold!.id
         )
         .catch((error: unknown) =>
           handleKyselyErrors(error)

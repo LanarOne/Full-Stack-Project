@@ -1,19 +1,19 @@
 import type {
   Context,
   ContextMinimal,
-} from '@server/trpc'
+} from '@server/trpc/index.js'
 import {
   type AuthUser,
   authUserSchema,
-} from '@server/entities/user'
+} from '@server/entities/user.js'
 import {
   fakeAuthHousehold,
   fakeAuthUser,
-} from '@server/entities/test/fakes'
+} from '@server/entities/test/fakes.js'
 import {
   type AuthHousehold,
   authHouseholdSchema,
-} from '@server/entities/household'
+} from '@server/entities/household.js'
 
 export const requestContext = (
   context: Partial<Context> & ContextMinimal

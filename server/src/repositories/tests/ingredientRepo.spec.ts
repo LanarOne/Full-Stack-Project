@@ -1,20 +1,20 @@
-import { createTestDatabase } from '@server/tests/utils/testDatabase'
+import { createTestDatabase } from '@server/tests/utils/testDatabase.js'
 import { describe, expect, it } from 'vitest'
-import { insertAll } from '@server/tests/utils/records'
+import { insertAll } from '@server/tests/utils/records.js'
 import {
   closeExpiryDate,
   fakeHousehold,
   fakeIngredient,
   longExpiryDate,
   someDaysAgo,
-} from '@server/entities/test/fakes'
-import { ingredientRepo } from '@server/repositories/ingredientRepo'
-import { wrapInRollbacks } from '@server/tests/utils/transactions'
+} from '@server/entities/test/fakes.js'
+import { ingredientRepo } from '@server/repositories/ingredientRepo.js'
+import { wrapInRollbacks } from '@server/tests/utils/transactions/index.js'
 import {
   type Insertable,
   type Updateable,
 } from 'kysely'
-import type { Ingredient } from '@server/database'
+import type { Ingredient } from '@server/database/types.js'
 
 const db = await wrapInRollbacks(
   createTestDatabase()
@@ -739,7 +739,7 @@ describe('Finds ingredient by storage', () => {
 
     const result = await repository.findByStorage(
       household.id,
-      'dry storage'
+      { storage: 'dry storage' }
     )
 
     expect(result).toBeDefined()
@@ -749,17 +749,7 @@ describe('Finds ingredient by storage', () => {
   it('should return an empty array if the storage is not valid', async () => {
     const result = await repository.findByStorage(
       household.id,
-      'outside'
-    )
-
-    expect(result).toBeDefined()
-    expect(result).toHaveLength(0)
-  })
-
-  it('should return an empty array id the storage is not valid', async () => {
-    const result = await repository.findByStorage(
-      household.id,
-      'not a valid storage'
+      'outside' as any
     )
 
     expect(result).toBeDefined()
@@ -769,7 +759,7 @@ describe('Finds ingredient by storage', () => {
   it('should return an empty array if no record was found for the householdId', async () => {
     const result = await repository.findByStorage(
       1312,
-      'freezer'
+      { storage: 'freezer' }
     )
 
     expect(result).toBeDefined()

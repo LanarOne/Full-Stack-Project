@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { idSchema } from '@server/entities/shared'
-import type { Ingredient } from '@server/database'
+import { idSchema } from '@server/entities/shared.js'
+import type { Ingredient } from '@server/database/types.js'
 import type { Selectable } from 'kysely'
 
 export const ingredientSchema = z.object({
@@ -91,4 +91,12 @@ const newIngredientKeysPublic = Object.keys(
 export type NewIngredient = Pick<
   Selectable<Ingredient>,
   (typeof newIngredientKeysPublic)[number]
+>
+
+const ingredientStorage = ingredientSchema.pick({
+  storage: true,
+})
+
+export type Storage = z.infer<
+  typeof ingredientStorage
 >

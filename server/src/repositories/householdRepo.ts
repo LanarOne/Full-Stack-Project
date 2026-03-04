@@ -1,11 +1,11 @@
 import type {
   Database,
   Household,
-} from '@server/database'
+} from '@server/database/index.js'
 import {
   householdKeysPublic,
   type HouseholdPublic,
-} from '@server/entities/household'
+} from '@server/entities/household.js'
 import type { Insertable } from 'kysely'
 
 export function householdRepo(db: Database) {

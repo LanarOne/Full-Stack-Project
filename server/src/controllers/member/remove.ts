@@ -1,11 +1,11 @@
-import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure'
-import provideRepos from '@server/trpc/provideRepos'
-import { memberRepo } from '@server/repositories/memberRepo'
-import { memberSchema } from '@server/entities/member'
+import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure/index.js'
+import provideRepos from '@server/trpc/provideRepos/index.js'
+import { memberRepo } from '@server/repositories/memberRepo.js'
+import { memberSchema } from '@server/entities/member.js'
 import { TRPCError } from '@trpc/server'
-import { isAdmin } from '@server/helpers/isAdmin'
-import { handleKyselyErrors } from '@server/utils/errors'
-import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware'
+import { isAdmin } from '@server/helpers/isAdmin.js'
+import { handleKyselyErrors } from '@server/utils/errors.js'
+import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware.js'
 
 export default authedHouseholdProcedure
   .use(provideRepos({ memberRepo }))
@@ -14,11 +14,8 @@ export default authedHouseholdProcedure
     memberSchema.pick({ userId: true }).strict()
   )
   .mutation(
-    async ({
-      input: { userId },
-      ctx: { repos, authUser, authHousehold },
-    }) => {
-      if (!authUser || !authHousehold) {
+    async ({ input: { userId }, ctx }) => {
+      if (!ctx.authUser || !ctx.authHousehold) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message:
@@ -27,12 +24,15 @@ export default authedHouseholdProcedure
       }
 
       const isChief = await isAdmin({
-        userId: authUser.id,
-        householdId: authHousehold.id,
-        memberRepo: repos.memberRepo,
+        userId: ctx.authUser.id,
+        householdId: ctx.authHousehold.id,
+        memberRepo: ctx.repos.memberRepo,
       })
 
-      if (userId !== authUser.id && !isChief) {
+      if (
+        userId !== ctx.authUser.id &&
+        !isChief
+      ) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message:
@@ -40,9 +40,9 @@ export default authedHouseholdProcedure
         })
       }
 
-      const result = await repos.memberRepo
-        .delete(userId, authHousehold.id)
-        .catch((error) =>
+      const result = await ctx.repos.memberRepo
+        .delete(userId, ctx.authHousehold.id)
+        .catch((error: unknown) =>
           handleKyselyErrors(error)
         )
 

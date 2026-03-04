@@ -1,10 +1,13 @@
 import {
   authContext,
   requestContext,
-} from '@server/tests/utils/context'
+} from '@server/tests/utils/context.js'
 import { describe, it, expect } from 'vitest'
-import { authedProcedure } from '@server/trpc/authedProcedure/index'
-import { createCallerFactory, router } from '..'
+import { authedProcedure } from '@server/trpc/authedProcedure/index.js'
+import {
+  createCallerFactory,
+  router,
+} from '../index.js'
 
 const routes = router({
   testCall: authedProcedure.query(() => 'passed'),

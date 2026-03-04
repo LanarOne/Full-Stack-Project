@@ -1,9 +1,9 @@
-import provideRepos from '@server/trpc/provideRepos'
-import { authedProcedure } from '@server/trpc/authedProcedure'
-import { householdRepo } from '@server/repositories/householdRepo'
-import { householdSchema } from '@server/entities/household'
-import { handleKyselyErrors } from '@server/utils/errors'
-import { memberRepo } from '@server/repositories/memberRepo'
+import provideRepos from '@server/trpc/provideRepos/index.js'
+import { authedProcedure } from '@server/trpc/authedProcedure/index.js'
+import { householdRepo } from '@server/repositories/householdRepo.js'
+import { householdSchema } from '@server/entities/household.js'
+import { handleKyselyErrors } from '@server/utils/errors.js'
+import { memberRepo } from '@server/repositories/memberRepo.js'
 
 export default authedProcedure
   .use(
@@ -17,33 +17,30 @@ export default authedProcedure
       })
       .partial({ profilePicture: true })
   )
-  .mutation(
-    async ({
-      input,
-      ctx: { authUser, repos },
-    }) => {
-      const { name, profilePicture } = input
+  .mutation(async ({ input, ctx }) => {
+    const { name, profilePicture } = input
 
-      const newHousehold =
-        await repos.householdRepo
-          .create({
-            name,
-            profilePicture,
-          })
-          .catch((error) =>
-            handleKyselyErrors(error)
-          )
+    // TRANSACTION HERE
 
-      await repos.memberRepo
+    const newHousehold =
+      await ctx.repos.householdRepo
         .create({
-          householdId: newHousehold.id,
-          userId: authUser.id,
-          roleId: 1,
+          name,
+          profilePicture,
         })
-        .catch((error) =>
+        .catch((error: unknown) =>
           handleKyselyErrors(error)
         )
 
-      return newHousehold
-    }
-  )
+    await ctx.repos.memberRepo
+      .create({
+        householdId: newHousehold.id,
+        userId: ctx.authUser.id,
+        roleId: 1,
+      })
+      .catch((error: unknown) =>
+        handleKyselyErrors(error)
+      )
+
+    return newHousehold
+  })

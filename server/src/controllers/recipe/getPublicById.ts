@@ -1,8 +1,8 @@
-import { authedProcedure } from '@server/trpc/authedProcedure'
-import provideRepos from '@server/trpc/provideRepos'
-import { recipeRepo } from '@server/repositories/recipeRepo'
-import { recipeSchema } from '@server/entities/recipe'
-import { handleKyselyErrors } from '@server/utils/errors'
+import { authedProcedure } from '@server/trpc/authedProcedure/index.js'
+import provideRepos from '@server/trpc/provideRepos/index.js'
+import { recipeRepo } from '@server/repositories/recipeRepo.js'
+import { recipeSchema } from '@server/entities/recipe.js'
+import { handleKyselyErrors } from '@server/utils/errors.js'
 import { TRPCError } from '@trpc/server'
 
 export default authedProcedure
@@ -15,9 +15,9 @@ export default authedProcedure
   .query(
     async ({
       input: { id, householdId },
-      ctx: { repos },
+      ctx,
     }) => {
-      const recipe = await repos.recipeRepo
+      const recipe = await ctx.repos.recipeRepo
         .findById({
           id,
           householdId,

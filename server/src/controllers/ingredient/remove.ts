@@ -1,11 +1,11 @@
-import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure'
-import provideRepos from '@server/trpc/provideRepos'
-import { ingredientRepo } from '@server/repositories/ingredientRepo'
-import { memberRepo } from '@server/repositories/memberRepo'
-import { enforceIsGuest } from '@server/trpc/middlewares/isGuestMiddleware'
-import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware'
-import { ingredientSchema } from '@server/entities/ingredient'
-import { handleKyselyErrors } from '@server/utils/errors'
+import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure/index.js'
+import provideRepos from '@server/trpc/provideRepos/index.js'
+import { ingredientRepo } from '@server/repositories/ingredientRepo.js'
+import { memberRepo } from '@server/repositories/memberRepo.js'
+import { enforceIsGuest } from '@server/trpc/middlewares/isGuestMiddleware.js'
+import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware.js'
+import { ingredientSchema } from '@server/entities/ingredient.js'
+import { handleKyselyErrors } from '@server/utils/errors.js'
 
 export default authedHouseholdProcedure
   .use(
@@ -16,17 +16,12 @@ export default authedHouseholdProcedure
   .input(
     ingredientSchema.pick({ id: true }).strict()
   )
-  .mutation(
-    async ({
-      input: { id },
-      ctx: { repos, authHousehold },
-    }) => {
-      const result = await repos.ingredientRepo
-        .delete(id, authHousehold!.id)
-        .catch((err: unknown) =>
-          handleKyselyErrors(err)
-        )
+  .mutation(async ({ input: { id }, ctx }) => {
+    const result = await ctx.repos.ingredientRepo
+      .delete(id, ctx.authHousehold!.id)
+      .catch((err: unknown) =>
+        handleKyselyErrors(err)
+      )
 
-      return result
-    }
-  )
+    return result
+  })

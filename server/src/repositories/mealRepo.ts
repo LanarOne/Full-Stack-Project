@@ -1,12 +1,12 @@
 import type {
   Database,
   Meal,
-} from '@server/database'
+} from '@server/database/index.js'
 import type { Insertable } from 'kysely'
 import {
   mealKeysPublic,
   type MealPublic,
-} from '@server/entities/meal'
+} from '@server/entities/meal.js'
 
 export function mealRepo(db: Database) {
   return {

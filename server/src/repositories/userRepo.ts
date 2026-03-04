@@ -1,7 +1,7 @@
 import type {
   Database,
   User,
-} from '@server/database'
+} from '@server/database/index.js'
 import type {
   Insertable,
   Updateable,
@@ -11,7 +11,7 @@ import {
   userKeysAll,
   userKeysPublic,
   type UserPublic,
-} from '@server/entities/user'
+} from '@server/entities/user.js'
 
 export function userRepo(db: Database) {
   return {

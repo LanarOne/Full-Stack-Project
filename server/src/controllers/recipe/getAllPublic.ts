@@ -1,12 +1,12 @@
-import { authedProcedure } from '@server/trpc/authedProcedure'
-import provideRepos from '@server/trpc/provideRepos'
-import { recipeRepo } from '@server/repositories/recipeRepo'
-import { handleKyselyErrors } from '@server/utils/errors'
+import { authedProcedure } from '@server/trpc/authedProcedure/index.js'
+import provideRepos from '@server/trpc/provideRepos/index.js'
+import { recipeRepo } from '@server/repositories/recipeRepo.js'
+import { handleKyselyErrors } from '@server/utils/errors.js'
 
 export default authedProcedure
   .use(provideRepos({ recipeRepo }))
-  .query(async ({ ctx: { repos } }) => {
-    const result = await repos.recipeRepo
+  .query(async ({ ctx }) => {
+    const result = await ctx.repos.recipeRepo
       .findAllPublicRecipe()
       .catch((error: unknown) =>
         handleKyselyErrors(error)

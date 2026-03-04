@@ -1,8 +1,8 @@
-import { wrapInRollbacks } from '@server/tests/utils/transactions'
-import { createTestDatabase } from '@server/tests/utils/testDatabase'
-import { createCallerFactory } from '@server/trpc'
-import recipeIngredientRouter from '@server/controllers/recipeIngredient'
-import { insertAll } from '@server/tests/utils/records'
+import { wrapInRollbacks } from '@server/tests/utils/transactions/index.js'
+import { createTestDatabase } from '@server/tests/utils/testDatabase.js'
+import { createCallerFactory } from '@server/trpc/index.js'
+import recipeIngredientRouter from '@server/controllers/recipeIngredient/index.js'
+import { insertAll } from '@server/tests/utils/records.js'
 import {
   fakeHousehold,
   fakeIngredient,
@@ -10,12 +10,12 @@ import {
   fakeRcpIngr,
   fakeRecipe,
   fakeUser,
-} from '@server/entities/test/fakes'
+} from '@server/entities/test/fakes.js'
 import { describe, expect, it } from 'vitest'
 import {
   authContext,
   requestContext,
-} from '@server/tests/utils/context'
+} from '@server/tests/utils/context.js'
 
 const db = await wrapInRollbacks(
   createTestDatabase()

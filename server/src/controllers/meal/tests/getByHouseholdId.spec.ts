@@ -1,20 +1,20 @@
-import { wrapInRollbacks } from '@server/tests/utils/transactions'
-import { createTestDatabase } from '@server/tests/utils/testDatabase'
-import { createCallerFactory } from '@server/trpc'
-import mealRouter from '@server/controllers/meal'
-import { insertAll } from '@server/tests/utils/records'
+import { wrapInRollbacks } from '@server/tests/utils/transactions/index.js'
+import { createTestDatabase } from '@server/tests/utils/testDatabase.js'
+import { createCallerFactory } from '@server/trpc/index.js'
+import mealRouter from '@server/controllers/meal/index.js'
+import { insertAll } from '@server/tests/utils/records.js'
 import {
   fakeHomeMeal,
   fakeHousehold,
   fakeMember,
   fakeRecipe,
   fakeUser,
-} from '@server/entities/test/fakes'
+} from '@server/entities/test/fakes.js'
 import { describe, it, expect } from 'vitest'
 import {
   authContext,
   requestContext,
-} from '@server/tests/utils/context'
+} from '@server/tests/utils/context.js'
 
 const db = await wrapInRollbacks(
   createTestDatabase()

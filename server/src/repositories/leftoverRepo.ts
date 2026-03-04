@@ -1,7 +1,7 @@
 import type {
   Database,
   Leftover,
-} from '@server/database'
+} from '@server/database/index.js'
 import type {
   Insertable,
   Updateable,
@@ -10,7 +10,7 @@ import {
   leftoverKeysAll,
   type LeftoverPublic,
   leftoverPublicKeysAll,
-} from '@server/entities/leftover'
+} from '@server/entities/leftover.js'
 
 export function leftoverRepo(db: Database) {
   return {

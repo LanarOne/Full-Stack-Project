@@ -1,8 +1,8 @@
-import { memberSchema } from '@server/entities/member'
-import { handleKyselyErrors } from '@server/utils/errors'
-import { memberRepo } from '@server/repositories/memberRepo'
-import { authedProcedure } from '@server/trpc/authedProcedure'
-import provideRepos from '@server/trpc/provideRepos'
+import { memberSchema } from '@server/entities/member.js'
+import { handleKyselyErrors } from '@server/utils/errors.js'
+import { memberRepo } from '@server/repositories/memberRepo.js'
+import { authedProcedure } from '@server/trpc/authedProcedure/index.js'
+import provideRepos from '@server/trpc/provideRepos/index.js'
 
 export default authedProcedure
   .use(provideRepos({ memberRepo }))
@@ -14,14 +14,11 @@ export default authedProcedure
       .strict()
   )
   .query(
-    async ({
-      input: { householdId },
-      ctx: { authUser, repos },
-    }) => {
-      const result = await repos.memberRepo
+    async ({ input: { householdId }, ctx }) => {
+      const result = await ctx.repos.memberRepo
         .findOne({
           householdId,
-          userId: authUser.id,
+          userId: ctx.authUser.id,
         })
         .catch((error) =>
           handleKyselyErrors(error)

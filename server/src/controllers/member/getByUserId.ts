@@ -1,13 +1,13 @@
-import { authedProcedure } from '@server/trpc/authedProcedure'
-import provideRepos from '@server/trpc/provideRepos'
-import { memberRepo } from '@server/repositories/memberRepo'
-import { handleKyselyErrors } from '@server/utils/errors'
+import { authedProcedure } from '@server/trpc/authedProcedure/index.js'
+import provideRepos from '@server/trpc/provideRepos/index.js'
+import { memberRepo } from '@server/repositories/memberRepo.js'
+import { handleKyselyErrors } from '@server/utils/errors.js'
 
 export default authedProcedure
   .use(provideRepos({ memberRepo }))
-  .query(async ({ ctx: { repos, authUser } }) => {
-    const result = await repos.memberRepo
-      .findByUserId(authUser.id)
+  .query(async ({ ctx }) => {
+    const result = await ctx.repos.memberRepo
+      .findByUserId(ctx.authUser.id)
       .catch((error: unknown) =>
         handleKyselyErrors(error)
       )

@@ -1,14 +1,14 @@
-import { createTestDatabase } from '@server/tests/utils/testDatabase'
-import { insertAll } from '@server/tests/utils/records'
-import { fakeUser } from '@server/entities/test/fakes'
+import { createTestDatabase } from '@server/tests/utils/testDatabase.js'
+import { insertAll } from '@server/tests/utils/records.js'
+import { fakeUser } from '@server/entities/test/fakes.js'
 import { describe, it, expect } from 'vitest'
-import { userRepo } from '@server/repositories/userRepo'
-import { wrapInRollbacks } from '@server/tests/utils/transactions'
+import { userRepo } from '@server/repositories/userRepo.js'
+import { wrapInRollbacks } from '@server/tests/utils/transactions/index.js'
 import type {
   Insertable,
   Updateable,
 } from 'kysely'
-import type { User } from '@server/database'
+import type { User } from '@server/database/types.js'
 
 const db = await wrapInRollbacks(
   createTestDatabase()

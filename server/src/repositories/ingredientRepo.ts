@@ -1,7 +1,7 @@
 import type {
   Database,
   Ingredient,
-} from '@server/database'
+} from '@server/database/index.js'
 import type {
   Insertable,
   Updateable,
@@ -10,7 +10,8 @@ import {
   ingredientKeysAll,
   ingredientKeysPublic,
   type IngredientPublic,
-} from '@server/entities/ingredient'
+  type Storage,
+} from '@server/entities/ingredient.js'
 
 export function ingredientRepo(db: Database) {
   return {
@@ -88,12 +89,12 @@ export function ingredientRepo(db: Database) {
 
     async findByStorage(
       householdId: number,
-      storage: string
+      storage: Storage
     ): Promise<IngredientPublic[]> {
       return db
         .selectFrom('ingredient')
         .select(ingredientKeysPublic)
-        .where('storage', '=', storage)
+        .where('storage', '=', storage.storage)
         .where('householdId', '=', householdId)
         .execute()
     },

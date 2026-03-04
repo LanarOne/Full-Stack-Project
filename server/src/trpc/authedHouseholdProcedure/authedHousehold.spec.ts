@@ -1,18 +1,21 @@
 import {
   authContext,
   requestContext,
-} from '@server/tests/utils/context'
+} from '@server/tests/utils/context.js'
 import { describe, expect } from 'vitest'
-import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure/index'
-import { wrapInRollbacks } from '@server/tests/utils/transactions'
-import { createTestDatabase } from '@server/tests/utils/testDatabase'
-import { insertAll } from '@server/tests/utils/records'
+import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure/index.js'
+import { wrapInRollbacks } from '@server/tests/utils/transactions/index.js'
+import { createTestDatabase } from '@server/tests/utils/testDatabase.js'
+import { insertAll } from '@server/tests/utils/records.js'
 import {
   fakeHousehold,
   fakeMember,
   fakeUser,
-} from '@server/entities/test/fakes'
-import { createCallerFactory, router } from '..'
+} from '@server/entities/test/fakes.js'
+import {
+  createCallerFactory,
+  router,
+} from '../index.js'
 
 const routes = router({
   testCall: authedHouseholdProcedure.query(

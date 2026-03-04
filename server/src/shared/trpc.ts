@@ -1,1 +1,1 @@
-export type { AppRouter } from '../controllers'
+export type { AppRouter } from '../controllers/index.js'

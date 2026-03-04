@@ -10,9 +10,9 @@ import type {
   RcpIngr,
   Recipe,
   User,
-} from '@server/database'
-import type { AuthUser } from '@server/entities/user'
-import type { AuthHousehold } from '@server/entities/household'
+} from '@server/database/types.js'
+import type { AuthUser } from '@server/entities/user.js'
+import type { AuthHousehold } from '@server/entities/household.js'
 
 const random = Chance(2)
 

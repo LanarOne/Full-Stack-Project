@@ -1,4 +1,4 @@
-import { middleware } from '@server/trpc'
+import { middleware } from '@server/trpc/index.js'
 import { TRPCError } from '@trpc/server'
 
 export const enforceWasInvited = middleware(

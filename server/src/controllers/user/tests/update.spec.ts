@@ -1,14 +1,14 @@
-import { wrapInRollbacks } from '@server/tests/utils/transactions'
-import { createTestDatabase } from '@server/tests/utils/testDatabase'
-import { createCallerFactory } from '@server/trpc'
+import { wrapInRollbacks } from '@server/tests/utils/transactions/index.js'
+import { createCallerFactory } from '@server/trpc/index.js'
+import { createTestDatabase } from '@server/tests/utils/testDatabase.js'
 import { describe, it, expect } from 'vitest'
-import { insertAll } from '@server/tests/utils/records'
-import { fakeUser } from '@server/entities/test/fakes'
+import { insertAll } from '@server/tests/utils/records.js'
+import { fakeUser } from '@server/entities/test/fakes.js'
 import {
   authContext,
   requestContext,
-} from '@server/tests/utils/context'
-import userRouter from '..'
+} from '@server/tests/utils/context.js'
+import userRouter from '../index.js'
 
 const db = await wrapInRollbacks(
   createTestDatabase()
@@ -31,7 +31,6 @@ describe('User Update Controller', () => {
 
     await expect(
       update({
-        id: user.id,
         diet: null,
         allergies: 'nuts',
       })
@@ -42,42 +41,15 @@ describe('User Update Controller', () => {
     )
   })
 
-  const { update } = createCaller(
-    authContext(
-      { db },
-      { id: user.id, email: user.email }
-    )
-  )
-
-  it('should update a user in the database', async () => {
-    const partialUser = {
-      id: user.id,
-      name: user.name,
-      diet: 'gluten-free',
-      allergies: null,
-    }
-
-    const result = await update(partialUser)
-
-    expect(result).toBeDefined()
-    expect(result.diet).toBe('gluten-free')
-    expect(result.allergies).toBe(null)
-  })
-
-  it('should allow a partial update', async () => {
-    await expect(
-      update({ id: user.id, diet: 'vegan' })
-    ).resolves.toEqual(
-      expect.objectContaining({
-        id: user.id,
-        diet: 'vegan',
-      })
-    )
-  })
-
   it('should throw if the user does not exist in the database', async () => {
+    const { update } = createCaller(
+      authContext(
+        { db },
+        { id: 1312, email: 'user@email.co' }
+      )
+    )
+
     const partialUser = {
-      id: 1312,
       diet: 'gluten-free',
       allergies: null,
       name: user.name,
@@ -95,10 +67,41 @@ describe('User Update Controller', () => {
     )
   })
 
+  const { update } = createCaller(
+    authContext(
+      { db },
+      { id: user.id, email: user.email }
+    )
+  )
+
+  it('should update a user in the database', async () => {
+    const partialUser = {
+      name: user.name,
+      diet: 'gluten-free',
+      allergies: null,
+    }
+
+    const result = await update(partialUser)
+
+    expect(result).toBeDefined()
+    expect(result.diet).toBe('gluten-free')
+    expect(result.allergies).toBe(null)
+  })
+
+  it('should allow a partial update', async () => {
+    await expect(
+      update({ diet: 'vegan' })
+    ).resolves.toEqual(
+      expect.objectContaining({
+        id: user.id,
+        diet: 'vegan',
+      })
+    )
+  })
+
   it('should throw if trying to update email', async () => {
     await expect(
       update({
-        id: user.id,
         email: 'someother@email.com',
       } as any)
     ).rejects.toThrow(

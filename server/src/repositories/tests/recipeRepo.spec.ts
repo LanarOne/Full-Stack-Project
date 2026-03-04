@@ -1,13 +1,13 @@
-import { wrapInRollbacks } from '@server/tests/utils/transactions'
-import { createTestDatabase } from '@server/tests/utils/testDatabase'
-import { recipeRepo } from '@server/repositories/recipeRepo'
+import { wrapInRollbacks } from '@server/tests/utils/transactions/index.js'
+import { createTestDatabase } from '@server/tests/utils/testDatabase.js'
+import { recipeRepo } from '@server/repositories/recipeRepo.js'
 import { describe, expect, it } from 'vitest'
-import { insertAll } from '@server/tests/utils/records'
+import { insertAll } from '@server/tests/utils/records.js'
 import {
   fakeHousehold,
   fakeRecipe,
-} from '@server/entities/test/fakes'
-import type { Recipe } from '@server/database'
+} from '@server/entities/test/fakes.js'
+import type { Recipe } from '@server/database/types.js'
 import type {
   Insertable,
   Updateable,

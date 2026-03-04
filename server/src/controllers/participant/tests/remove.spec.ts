@@ -1,8 +1,8 @@
-import { wrapInRollbacks } from '@server/tests/utils/transactions'
-import { createTestDatabase } from '@server/tests/utils/testDatabase'
-import { createCallerFactory } from '@server/trpc'
-import participantRouter from '@server/controllers/participant'
-import { insertAll } from '@server/tests/utils/records'
+import { wrapInRollbacks } from '@server/tests/utils/transactions/index.js'
+import { createTestDatabase } from '@server/tests/utils/testDatabase.js'
+import { createCallerFactory } from '@server/trpc/index.js'
+import participantRouter from '@server/controllers/participant/index.js'
+import { insertAll } from '@server/tests/utils/records.js'
 import {
   fakeHomeMeal,
   fakeHousehold,
@@ -10,12 +10,12 @@ import {
   fakeParticipant,
   fakeRecipe,
   fakeUser,
-} from '@server/entities/test/fakes'
+} from '@server/entities/test/fakes.js'
 import { describe, it, expect } from 'vitest'
 import {
   authContext,
   requestContext,
-} from '@server/tests/utils/context'
+} from '@server/tests/utils/context.js'
 
 const db = await wrapInRollbacks(
   createTestDatabase()
@@ -72,7 +72,6 @@ describe('Participant Delete Controller', () => {
 
     await expect(
       remove({
-        userId: user.id,
         mealId: homeMeal.id,
       })
     ).rejects.toThrow(
@@ -100,7 +99,6 @@ describe('Participant Delete Controller', () => {
 
     await expect(
       remove({
-        userId: user.id,
         mealId: homeMeal.id,
       })
     ).rejects.toThrow(
@@ -109,6 +107,34 @@ describe('Participant Delete Controller', () => {
         message:
           'You cannot access this information',
         name: 'TRPCError',
+      })
+    )
+  })
+
+  it('should throw if there is no record in the database for the user ID', async () => {
+    const { remove } = createCaller(
+      authContext(
+        { db },
+        {
+          id: 1312,
+          email: 'user.emai@gmail.iso',
+        },
+        {
+          id: household.id,
+        }
+      )
+    )
+
+    await expect(
+      remove({
+        mealId: homeMeal.id,
+      })
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'FORBIDDEN',
+        name: 'TRPCError',
+        message:
+          'You cannot access this information',
       })
     )
   })
@@ -126,25 +152,9 @@ describe('Participant Delete Controller', () => {
     )
   )
 
-  it('should throw if there is no record in the database for the user ID', async () => {
-    await expect(
-      remove({
-        userId: 1312,
-        mealId: homeMeal.id,
-      })
-    ).rejects.toThrow(
-      expect.objectContaining({
-        code: 'NOT_FOUND',
-        name: 'TRPCError',
-        message:
-          'No matching record found in the database',
-      })
-    )
-  })
-
   it('should throw if there is no record in the database for the meal ID', async () => {
     await expect(
-      remove({ userId: user.id, mealId: 1312 })
+      remove({ mealId: 1312 })
     ).rejects.toThrow(
       expect.objectContaining({
         code: 'FORBIDDEN',
@@ -155,28 +165,9 @@ describe('Participant Delete Controller', () => {
     )
   })
 
-  it('should throw if the user ID is not properly formatted', async () => {
-    await expect(
-      remove({
-        userId: 'notAnId' as any,
-        mealId: homeMeal.id,
-      })
-    ).rejects.toThrow(
-      expect.objectContaining({
-        code: 'BAD_REQUEST',
-        name: 'TRPCError',
-        message:
-          expect.objectContaining(
-            /invalid_type/i
-          ),
-      })
-    )
-  })
-
   it('should throw if the meal ID is not properly formatted', async () => {
     await expect(
       remove({
-        userId: user.id,
         mealId: 'notAnId' as any,
       })
     ).rejects.toThrow(
@@ -194,7 +185,6 @@ describe('Participant Delete Controller', () => {
   it('should throw if there are too many fields in the request', async () => {
     await expect(
       remove({
-        userId: user.id,
         mealId: homeMeal.id,
         newField: 'malevolent hack',
       } as any)
@@ -212,7 +202,6 @@ describe('Participant Delete Controller', () => {
   it('should remove a Participant correctly', async () => {
     await expect(
       remove({
-        userId: user.id,
         mealId: homeMeal.id,
       })
     ).resolves.toEqual(

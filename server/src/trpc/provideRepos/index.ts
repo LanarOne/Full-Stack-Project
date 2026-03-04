@@ -2,8 +2,8 @@ import type {
   Repositories,
   RepositoriesFactories,
   RepositoriesKeys,
-} from '@server/repositories'
-import { middleware } from '..'
+} from '@server/repositories/index.js'
+import { middleware } from '../index.js'
 
 type Entries<T> = {
   [K in keyof T]: [K, T[K]]

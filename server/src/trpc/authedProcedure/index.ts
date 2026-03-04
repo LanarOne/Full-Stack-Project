@@ -1,7 +1,7 @@
-import config from '@server/config'
-import { publicProcedure } from '@server/trpc'
+import config from '@server/config.js'
+import { publicProcedure } from '@server/trpc/index.js'
 import { TRPCError } from '@trpc/server'
-import { getUserFromToken } from '@server/helpers/tokenHelpers'
+import { getUserFromToken } from '@server/helpers/tokenHelpers.js'
 
 export const authedProcedure =
   publicProcedure.use(({ ctx, next }) => {

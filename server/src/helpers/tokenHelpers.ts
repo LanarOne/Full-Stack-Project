@@ -1,6 +1,6 @@
-import config from '@server/config'
+import config from '@server/config.js'
 import jsonwebtoken from 'jsonwebtoken'
-import { parseTokenPayload } from '@server/trpc/tokenPayload'
+import { parseTokenPayload } from '@server/trpc/tokenPayload.js'
 
 const { tokenKey } = config.auth
 

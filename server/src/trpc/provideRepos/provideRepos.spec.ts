@@ -10,8 +10,8 @@ import {
   createCallerFactory,
   publicProcedure,
   router,
-} from '..'
-import provideRepos from '.'
+} from '../index.js'
+import provideRepos from './index.js'
 
 const db = {} as any
 const userRepoBuilder = vi.fn(() => {}) as any

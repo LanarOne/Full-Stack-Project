@@ -1,11 +1,11 @@
-import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure'
-import provideRepos from '@server/trpc/provideRepos'
-import { memberRepo } from '@server/repositories/memberRepo'
-import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware'
-import { enforceIsGuest } from '@server/trpc/middlewares/isGuestMiddleware'
-import { handleKyselyErrors } from '@server/utils/errors'
-import { leftoverRepo } from '@server/repositories/leftoverRepo'
-import { leftoverSchema } from '@server/entities/leftover'
+import { authedHouseholdProcedure } from '@server/trpc/authedHouseholdProcedure/index.js'
+import provideRepos from '@server/trpc/provideRepos/index.js'
+import { memberRepo } from '@server/repositories/memberRepo.js'
+import { enforceIsMember } from '@server/trpc/middlewares/isMemberMiddleware.js'
+import { enforceIsGuest } from '@server/trpc/middlewares/isGuestMiddleware.js'
+import { handleKyselyErrors } from '@server/utils/errors.js'
+import { leftoverRepo } from '@server/repositories/leftoverRepo.js'
+import { leftoverSchema } from '@server/entities/leftover.js'
 
 export default authedHouseholdProcedure
   .use(
@@ -25,18 +25,15 @@ export default authedHouseholdProcedure
       })
       .strict()
   )
-  .mutation(
-    async ({
-      input: leftover,
-      ctx: { repos, authHousehold },
-    }) => {
-      const result = await repos.leftoverRepo
-        .create({
-          ...leftover,
-          householdId: authHousehold!.id,
-        })
-        .catch((err) => handleKyselyErrors(err))
+  .mutation(async ({ input: leftover, ctx }) => {
+    const result = await ctx.repos.leftoverRepo
+      .create({
+        ...leftover,
+        householdId: ctx.authHousehold!.id,
+      })
+      .catch((err: unknown) =>
+        handleKyselyErrors(err)
+      )
 
-      return result
-    }
-  )
+    return result
+  })

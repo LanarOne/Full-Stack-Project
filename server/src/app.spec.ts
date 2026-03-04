@@ -1,5 +1,5 @@
-import { createTestDatabase } from '@server/tests/utils/testDatabase'
-import createApp from '@server/app'
+import { createTestDatabase } from '@server/tests/utils/testDatabase.js'
+import createApp from '@server/app.js'
 import { afterAll } from 'vitest'
 import supertest from 'supertest'
 

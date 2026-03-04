@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { idSchema } from '@server/entities/shared'
-import type { RcpIngr } from '@server/database'
+import { idSchema } from '@server/entities/shared.js'
+import type { RcpIngr } from '@server/database/types.js'
 import type { Selectable } from 'kysely'
 
 export const recipeIngredientSchema = z.object({

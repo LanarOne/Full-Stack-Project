@@ -1,6 +1,6 @@
-import { middleware } from '@server/trpc'
+import { middleware } from '@server/trpc/index.js'
 import { TRPCError } from '@trpc/server'
-import { isAdmin } from '@server/helpers/isAdmin'
+import { isAdmin } from '@server/helpers/isAdmin.js'
 
 export const enforceIsChief = middleware(
   async ({

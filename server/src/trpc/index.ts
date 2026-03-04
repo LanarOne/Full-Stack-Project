@@ -1,12 +1,12 @@
-import type { Database } from '@server/database'
+import type { Database } from '@server/database/index.js'
 import { initTRPC } from '@trpc/server'
 import SuperJSON from 'superjson'
 import { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
 import type { Request, Response } from 'express'
-import type { Repositories } from '@server/repositories'
-import type { AuthUser } from '@server/entities/user'
-import type { AuthHousehold } from '@server/entities/household'
+import type { Repositories } from '@server/repositories/index.js'
+import type { AuthUser } from '@server/entities/user.js'
+import type { AuthHousehold } from '@server/entities/household.js'
 
 export type Context = {
   db: Database

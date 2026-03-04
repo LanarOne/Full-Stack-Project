@@ -1,6 +1,6 @@
-import { middleware } from '@server/trpc'
+import { middleware } from '@server/trpc/index.js'
 import { TRPCError } from '@trpc/server'
-import { isGuest } from '@server/helpers/isGuest'
+import { isGuest } from '@server/helpers/isGuest.js'
 
 export const enforceIsGuest = middleware(
   async ({

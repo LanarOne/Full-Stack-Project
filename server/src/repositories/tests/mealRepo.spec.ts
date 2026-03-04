@@ -1,7 +1,7 @@
-import { wrapInRollbacks } from '@server/tests/utils/transactions'
-import { createTestDatabase } from '@server/tests/utils/testDatabase'
-import { mealRepo } from '@server/repositories/mealRepo'
-import { insertAll } from '@server/tests/utils/records'
+import { wrapInRollbacks } from '@server/tests/utils/transactions/index.js'
+import { createTestDatabase } from '@server/tests/utils/testDatabase.js'
+import { mealRepo } from '@server/repositories/mealRepo.js'
+import { insertAll } from '@server/tests/utils/records.js'
 import {
   aWeekAgo,
   closeExpiryDate,
@@ -11,10 +11,10 @@ import {
   fakeRecipe,
   longExpiryDate,
   someDaysAgo,
-} from '@server/entities/test/fakes'
+} from '@server/entities/test/fakes.js'
 import { describe, expect, it } from 'vitest'
 import type { Insertable } from 'kysely'
-import type { Meal } from '@server/database'
+import type { Meal } from '@server/database/index.js'
 
 const db = await wrapInRollbacks(
   createTestDatabase()

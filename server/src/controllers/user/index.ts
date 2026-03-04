@@ -1,7 +1,7 @@
-import { router } from '@server/trpc'
-import signup from '@server/controllers/user/signup'
-import login from '@server/controllers/user/login'
-import update from '@server/controllers/user/update'
+import { router } from '@server/trpc/index.js'
+import signup from './signup.js'
+import login from './login.js'
+import update from './update.js'
 
 export default router({
   signup,

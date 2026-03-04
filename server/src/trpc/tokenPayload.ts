@@ -2,11 +2,11 @@ import { z } from 'zod'
 import {
   type AuthUser,
   authUserSchema,
-} from '@server/entities/user'
+} from '@server/entities/user.js'
 import {
   type AuthHousehold,
   authHouseholdSchema,
-} from '@server/entities/household'
+} from '@server/entities/household.js'
 
 const userOnlyTokenPayloadSchema = z.object({
   user: authUserSchema,
