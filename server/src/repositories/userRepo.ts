@@ -29,7 +29,7 @@ export function userRepo(db: Database) {
     ): Promise<UserPublic> {
       return db
         .selectFrom('user')
-        .select(userKeysAll)
+        .select(userKeysPublic)
         .where('id', '=', id)
         .executeTakeFirstOrThrow()
     },

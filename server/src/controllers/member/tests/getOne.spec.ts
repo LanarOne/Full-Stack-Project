@@ -128,9 +128,11 @@ describe('Member Get One Controller', () => {
       getOne({ householdId: household.id })
     ).resolves.toEqual(
       expect.objectContaining({
-        userId: user.id,
-        householdId: household.id,
-        roleId: 1,
+        result: {
+          userId: user.id,
+          householdId: household.id,
+          roleId: 1,
+        },
       })
     )
   })

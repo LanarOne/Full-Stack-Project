@@ -22,7 +22,7 @@ const createCaller = createCallerFactory(
 )
 
 const [user] = await insertAll(db, 'user', [
-  fakeUser({ email: 'toto@caca.com' }),
+  fakeUser({ email: 'random@email.com' }),
 ])
 
 const [household] = await insertAll(

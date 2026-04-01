@@ -17,7 +17,7 @@ const PASSWORD_CORRECT = 'acab.1312'
 
 const [user] = await insertAll(db, 'user', [
   fakeUser({
-    email: 'toto@caca.com',
+    email: 'some@email.com',
     password:
       '$2a$06$ReHvIIJwIalqXdvaw2mewultQU0ejWkoG4paCpYVBo5qLIAPbj//i',
   }),

@@ -82,15 +82,10 @@ export type IngredientPublic = Pick<
 export const newIngredientSchema =
   ingredientSchema.omit({
     id: true,
-    expiryDate: true,
   })
-const newIngredientKeysPublic = Object.keys(
-  newIngredientSchema.shape
-) as (keyof Ingredient)[]
 
-export type NewIngredient = Pick<
-  Selectable<Ingredient>,
-  (typeof newIngredientKeysPublic)[number]
+export type NewIngredient = z.input<
+  typeof newIngredientSchema
 >
 
 const ingredientStorage = ingredientSchema.pick({

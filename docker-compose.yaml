@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16.10-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: household_app
+
+    ports:
+      - "5432"
+
+    volumes:
+      - household-app:/var/lib/postgresql/data
+
+  server:
+    build:
+      context: .
+      dockerfile: ./server/Dockerfile
+
+    environment:
+        env_file: ./server/.env
+
+    ports:
+      - "3000"
+
+    depends_on:
+      - postgres
+
+  client:
+    build:
+      context: .
+      dockerfile: ./client/Dockerfile
+    environment:
+      env_file: ./client/.env
+
+    ports:
+      - "3001:80"
+
+    depends_on:
+      - server
+
+volumes:
+  household-app:

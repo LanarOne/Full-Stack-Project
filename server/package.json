@@ -16,7 +16,7 @@
   "main": "index.ts",
   "scripts": {
     "build": "tsc -p tsconfig.build.json && npx tsc-alias",
-    "clean" : "rm -rf node_modules package-lock.json dist",
+    "clean": "rm -rf node_modules package-lock.json dist",
     "coverage": "vitest run --coverage",
     "dev": "tsx watch src",
     "format": "prettier --write \"src/**/*/ts\"",

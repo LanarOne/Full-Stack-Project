@@ -3,6 +3,7 @@ import { publicProcedure } from '@server/trpc/index.js'
 import provideRepos from '@server/trpc/provideRepos/index.js'
 import { userRepo } from '@server/repositories/userRepo.js'
 import { userSchema } from '@server/entities/user.js'
+import type { UserPublic } from '@server/entities/user.js'
 import { TRPCError } from '@trpc/server'
 import bcrypt from 'bcrypt'
 import { prepareTokenPayload } from '@server/trpc/tokenPayload.js'
@@ -56,7 +57,15 @@ export default publicProcedure
           } as jsonwebtoken.SignOptions
         )
 
-        return { token }
+        const {
+          password: _Password,
+          ...safeUser
+        } = user
+
+        return {
+          token,
+          user: safeUser as UserPublic,
+        }
       } catch (error) {
         return handleKyselyErrors(error)
       }

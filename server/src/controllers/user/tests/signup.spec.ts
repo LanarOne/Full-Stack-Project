@@ -57,7 +57,7 @@ describe('User signup controller', () => {
 
   it('should store lowercased email', async () => {
     const user = fakeUser({
-      email: 'TOTO@CACA.COM',
+      email: 'SOME@USER.COM',
     })
 
     await signup(user as any)
@@ -71,7 +71,7 @@ describe('User signup controller', () => {
 
     expect(userSaved).toHaveLength(1)
     expect(userSaved[0].email).toBe(
-      'toto@caca.com'
+      'some@user.com'
     )
   })
 

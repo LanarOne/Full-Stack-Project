@@ -19,7 +19,7 @@ const random = Chance(2)
 const randomId = () =>
   random.integer({
     min: 1,
-    max: 100000,
+    max: 1311,
   })
 
 export const fakeUser = <
