@@ -58,7 +58,7 @@ export default publicProcedure
         )
 
         const {
-          password: _password,
+          password: passWord,
           ...safeUser
         } = user
 
