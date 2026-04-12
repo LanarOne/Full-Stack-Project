@@ -10,7 +10,7 @@ test.describe.serial('create a household and navigate to its page', () => {
       await page.goto('/')
 
       const navCollapse = page.getByTestId('navCollapse')
-      const createBtn = page.getByLabel(/household/i)
+      const createBtn = page.getByText('Create household')
       const successMessage = page.getByTestId('successMessage')
 
       expect(navCollapse).toBeDefined()

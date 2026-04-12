@@ -31,7 +31,6 @@ export async function signupNewUser(
     await trpc.user.signup.mutate(userLogin)
   } catch (error) {
     // nothing to see here
-    console.error(error)
   }
 
   const loginResponse = await trpc.user.login.mutate(userLogin)
