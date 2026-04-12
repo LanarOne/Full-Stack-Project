@@ -65,7 +65,7 @@ jobs:
         with:
           max-attempts: 5
           retry-delay: '5s'
-          url: ${{ env.VITE_API_ORIGIN }}/api/health
+          url: http://localhost:3000/api/health
 
       - name: Test client E2E
         run: npm run test:e2e -w client
