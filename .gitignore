@@ -1,3 +1,5 @@
 node_modules
 /local
 containers.json
+aws
+awscliv2.zip
