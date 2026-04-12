@@ -33,9 +33,7 @@ async function submitLogin() {
 
     storeAccessToken(window.localStorage, result.token)
 
-    setTimeout(async () => {
-      await router.push({ name: 'home' })
-    }, 2500)
+    await router.push({ name: 'home' })
   } catch (error: unknown) {
     errorMessage.value = error instanceof Error ? error.message : error
   } finally {

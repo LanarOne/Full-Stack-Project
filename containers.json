@@ -1,0 +1,21 @@
+{
+  "client": {
+    "image": ":household-app.client.3",
+    "command": [],
+    "ports": {
+      "80": "HTTP"
+    }
+  },
+  "server": {
+    "image": ":household-app.server.4",
+    "ports": {
+      "3000": "HTTP"
+    },
+    "environment": {
+      "NODE_ENV": "production",
+      "PORT": "3000",
+      "DATABASE_URL": "postgresql://neondb_owner:npg_k7ETtR6QevHr@ep-wandering-mud-ablp8wmv-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
+      "TOKEN_KEY": "b4ckd4f*ckup1312"
+    }
+  }
+}

@@ -8,6 +8,6 @@ const app = createApp(database)
 app.listen(config.port, () => {
   // eslint-disable-next-line no-console
   console.log(
-    `Server is running @ http://localhost:${config.port}`
+    `Server is running on port: ${config.port}`
   )
 })

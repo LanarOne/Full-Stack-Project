@@ -8,18 +8,22 @@ test.describe.serial('signup and login sequence', () => {
   test('Visitor can sign up', async ({ page }) => {
     await page.goto('/signup')
     const successMessage = page.getByTestId('successMessage')
+    const errorMessage = page.getByTestId('errorMessage')
+
     await expect(successMessage).toBeHidden()
+    await expect(errorMessage).toBeHidden()
 
     const form = page.getByRole('form', { name: 'Signup' })
+    const submitBtn = page.getByTestId('submitBtn')
 
     await form.locator('input[type="email"]').fill(user.email)
     await form.locator('input[type="password"]').fill(user.password)
     await form.locator('input[data-testid="name"]').fill(user.name)
     await form.locator('input[data-testid="diet"]').fill(user.diet)
     await form.locator('input[data-testid="allergies"]').fill(user.allergies)
-    await form.locator('button[type="submit"]').click()
+    await submitBtn.click()
 
-    await expect(successMessage).toBeVisible()
+    await page.waitForURL('/login')
   })
 
   test('Visitor is redirected to login if they try to access the main page before login', async ({
@@ -51,8 +55,6 @@ test.describe.serial('signup and login sequence', () => {
     await form.locator('input[type="password"]').fill(user.password)
     await form.locator('button[type="submit"]').click()
 
-    await expect(successMessage).toBeVisible()
-    await page.reload()
     await expect(page).toHaveURL('/')
   })
 })

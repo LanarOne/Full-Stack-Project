@@ -30,9 +30,7 @@ async function handleSubmit() {
 
     succeeded.value = true
 
-    setTimeout(async () => {
-      await router.push({ name: 'login' })
-    }, 2500)
+    await router.push({ name: 'login' })
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : 'Signup Failed'
   } finally {
@@ -80,11 +78,17 @@ async function handleSubmit() {
       name="profilePicture"
     />
     <div class="flex justify-center">
-      <fwb-button gradient="purple-pink" outline type="submit" :disabled="isLoading">
+      <fwb-button
+        gradient="purple-pink"
+        outline
+        type="submit"
+        :disabled="isLoading"
+        data-testid="submitBtn"
+      >
         {{ isLoading ? 'Loading...' : 'Signup' }}
       </fwb-button>
     </div></PageForm
   >
-  <fwb-alert v-if="errorMessage">{{ errorMessage }}</fwb-alert>
+  <fwb-alert v-if="errorMessage" data-testid="errorMessage">{{ errorMessage }}</fwb-alert>
   <fwb-alert v-if="succeeded" data-testid="successMessage">Signup succeeded</fwb-alert>
 </template>

@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 const { env } = process
 
-if (!env.NODE_ENV) env.NODE_ENV = 'development'
+if (!env.NODE_ENV) env.NODE_ENV = 'test'
 
 env.TZ = 'UTC'
 
@@ -51,7 +51,7 @@ const config = schema.parse({
   },
 
   database: {
-    connectionString: isDevTest
+    connectionString: isTest
       ? env.TEST_DATABASE_URL
       : env.DATABASE_URL,
   },

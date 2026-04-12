@@ -6,7 +6,7 @@ jobs:
   test:
     runs-on: ubuntu-22.04
     env:
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/household_app
+      DATABASE_URL: postgresql://neondb_owner:npg_k7ETtR6QevHr@ep-wandering-mud-ablp8wmv-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
       TOKEN_KEY: b4ckd4f*ckup1312
       TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/household_app
       TOKEN_EXPIRES_IN: 24h
@@ -34,7 +34,7 @@ jobs:
           cache: 'npm'
 
       - name: Install deps
-        run: npm install --legacy-peer-deps
+        run: npm ci
 
       - name: Type check server
         run: npm run typecheck -w server
@@ -42,8 +42,37 @@ jobs:
       - name: Lint server
         run: npm run lint -w server
 
+      - name: Lint client
+        run: npm run lint -w client
+
       - name: Run migrations
         run: npm run migrate:latest -w server
 
       - name: Run server tests
         run: npm run test -w server
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Start server for E2E tests
+        run: npm run dev -w server &
+
+      - name: Build front end for E2E tests
+        run: npm run build -w client
+
+      - name: Wait for the server to start
+        uses: Jtalk/url-health-check-action@v4
+        with:
+          max-attempts: 5
+          retry-delay: '5s'
+          url: ${{ env.VITE_API_ORIGIN }}/api/health
+
+      - name: Test client E2E
+        run: npm run test:e2e -w client
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: client/playwright-report/
+          retention-days: 7
