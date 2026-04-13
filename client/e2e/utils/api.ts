@@ -29,9 +29,9 @@ export async function signupNewUser(
 ): Promise<UserLoginAuthed> {
   try {
     await trpc.user.signup.mutate(userLogin)
-  } catch () {
+  } catch (error) {
     // nothing to see here
-    console.log('expected error')
+    console.error(error)
   }
 
   const loginResponse = await trpc.user.login.mutate(userLogin)
