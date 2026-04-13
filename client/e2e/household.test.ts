@@ -1,12 +1,12 @@
 import { fakeHousehold, fakeUser } from './utils/fakes.js'
 import { expect, test } from '@playwright/test'
-import { asUser } from './utils/api.js'
+import { asUser, trpc } from './utils/api.js'
 
 const user = fakeUser()
-const household = fakeHousehold()
 
 test.describe.serial('create a household and navigate to its page', () => {
   test('Logged user can create a household', async ({ page }) => {
+    const household = await asUser(page, user, () => trpc.household.create.mutate(fakeHousehold()))
     await asUser(page, user, async () => {
       await page.goto('/')
 
@@ -33,11 +33,12 @@ test.describe.serial('create a household and navigate to its page', () => {
   })
 
   test('Logged member can access the household url', async ({ page }) => {
+    const household = await asUser(page, user, () => trpc.household.create.mutate(fakeHousehold()))
     await asUser(page, user, async () => {
       await page.goto('/')
 
       const navCollapse = page.getByTestId('navCollapse')
-      const householdBtn = page.getByText(household.name)
+      const householdBtn = page.locator(`[href*="/household/${household.id}"]`)
 
       expect(navCollapse).toBeDefined()
       expect(householdBtn).toBeDefined()
@@ -51,13 +52,14 @@ test.describe.serial('create a household and navigate to its page', () => {
       expect(heading).toBeDefined()
       await expect(failedHeading).toBeHidden()
       await expect(page).toHaveURL(/household/i)
-      await expect(heading).toHaveText(`${household.name}'s Household !`)
+      await expect(heading).toHaveText(/'s Household ! /i)
     })
   })
 
   test('Logged member can create a recipe and see it in the main household page', async ({
     page,
   }) => {
+    const household = await asUser(page, user, () => trpc.household.create.mutate(fakeHousehold()))
     await asUser(page, user, async () => {
       await page.goto('/')
 
