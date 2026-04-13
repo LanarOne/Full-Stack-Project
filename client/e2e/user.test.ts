@@ -22,8 +22,9 @@ test.describe.serial('signup and login sequence', () => {
     await form.locator('input[data-testid="diet"]').fill(user.diet)
     await form.locator('input[data-testid="allergies"]').fill(user.allergies)
     await submitBtn.click()
+    await expect(errorMessage).toBeHidden()
 
-    await page.waitForURL('/login')
+    await expect(page).toHaveURL('/login')
   })
 
   test('Visitor is redirected to login if they try to access the main page before login', async ({
