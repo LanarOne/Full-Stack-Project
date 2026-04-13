@@ -1,8 +1,9 @@
-import { fakeUser } from './utils/fakes.js'
+import { fakeHousehold, fakeUser } from './utils/fakes.js'
 import { expect, test } from '@playwright/test'
 import { asUser } from './utils/api.js'
 
 const user = fakeUser()
+const household = fakeHousehold()
 
 test.describe.serial('create a household and navigate to its page', () => {
   test('Logged user can create a household', async ({ page }) => {
@@ -25,7 +26,7 @@ test.describe.serial('create a household and navigate to its page', () => {
       const form = page.getByLabel('New Household')
       await expect(form).toBeVisible()
 
-      await page.getByTestId('householdName').fill('Some name')
+      await page.getByTestId('householdName').fill(household.name)
       await form.locator('button[type="submit"]').click()
       await expect(successMessage).toBeVisible()
     })
@@ -36,7 +37,7 @@ test.describe.serial('create a household and navigate to its page', () => {
       await page.goto('/')
 
       const navCollapse = page.getByTestId('navCollapse')
-      const householdBtn = page.getByText(/Some name/i)
+      const householdBtn = page.getByText(household.name)
 
       expect(navCollapse).toBeDefined()
       expect(householdBtn).toBeDefined()
@@ -50,7 +51,7 @@ test.describe.serial('create a household and navigate to its page', () => {
       expect(heading).toBeDefined()
       await expect(failedHeading).toBeHidden()
       await expect(page).toHaveURL(/household/i)
-      await expect(heading).toHaveText("Some name's Household !")
+      await expect(heading).toHaveText(`${household.name}'s Household !`)
     })
   })
 
@@ -61,7 +62,7 @@ test.describe.serial('create a household and navigate to its page', () => {
       await page.goto('/')
 
       const navCollapse = page.getByTestId('navCollapse')
-      const householdBtn = page.getByText(/Some name/i)
+      const householdBtn = page.getByText(household.name)
 
       expect(navCollapse).toBeDefined()
       expect(householdBtn).toBeDefined()
