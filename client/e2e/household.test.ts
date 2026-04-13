@@ -64,7 +64,7 @@ test.describe.serial('create a household and navigate to its page', () => {
       await page.goto('/')
 
       const navCollapse = page.getByTestId('navCollapse')
-      const householdBtn = page.getByText(household.name)
+      const householdBtn = page.locator(`[href*="/household/${household.id}"]`)
 
       expect(navCollapse).toBeDefined()
       expect(householdBtn).toBeDefined()
