@@ -2,7 +2,7 @@ import { Chance } from 'chance'
 import { Insertable } from 'kysely'
 import type { User } from '@server/shared/types.js'
 
-export const random = process.env.CI ? Chance(1) : Chance()
+export const random = process.env.CI ? Chance() : Chance()
 
 export const fakeUser = <T extends Insertable<User>>(overrides: Partial<T> = {} as T) => ({
   email: random.email(),
