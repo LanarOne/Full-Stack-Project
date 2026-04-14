@@ -2,10 +2,9 @@ import { fakeUser } from './utils/fakes.js'
 import { expect, test } from '@playwright/test'
 import { asUser } from './utils/api.js'
 
-const user = fakeUser()
-
 test.describe.serial('signup and login sequence', () => {
   test('Visitor can sign up', async ({ page }) => {
+    const user = fakeUser()
     await page.goto('/signup')
     const successMessage = page.getByTestId('successMessage')
     const errorMessage = page.getByTestId('errorMessage')
@@ -45,6 +44,18 @@ test.describe.serial('signup and login sequence', () => {
   })
 
   test('visitor can log in', async ({ page }) => {
+    const user = fakeUser()
+    await page.goto('/signup')
+
+    const signUpForm = page.getByRole('form', { name: 'Signup' })
+    const submitBtn = page.getByTestId('submitBtn')
+
+    await signUpForm.locator('input[type="email"]').fill(user.email)
+    await signUpForm.locator('input[type="password"]').fill(user.password)
+    await signUpForm.locator('input[data-testid="name"]').fill(user.name)
+    await signUpForm.locator('input[data-testid="diet"]').fill(user.diet)
+    await signUpForm.locator('input[data-testid="allergies"]').fill(user.allergies)
+    await submitBtn.click()
     await page.goto('/login')
 
     const successMessage = page.getByTestId('successMessage')
