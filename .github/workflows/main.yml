@@ -117,7 +117,7 @@ jobs:
           cat > containers.json <<EOF
           {
           "client": {
-            "image": "${LIGHTSAIL_CLIENT_IMAGE}",
+            "image": "${env.LIGHTSAIL_CLIENT_IMAGE}",
             "command": [],
             "ports": {
               "80": "HTTP"
@@ -127,7 +127,7 @@ jobs:
             }
           },
           "server": {
-            "image": "${LIGHTSAIL_SERVER_IMAGE}",
+            "image": "${env.LIGHTSAIL_SERVER_IMAGE}",
             "ports": {
               "3000":"HTTP"
             },
