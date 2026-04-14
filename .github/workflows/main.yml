@@ -6,11 +6,11 @@ jobs:
   test:
     runs-on: ubuntu-22.04
     env:
-      DATABASE_URL: postgresql://neondb_owner:npg_k7ETtR6QevHr@ep-wandering-mud-ablp8wmv-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
-      TOKEN_KEY: b4ckd4f*ckup1312
-      TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/household_app
-      TOKEN_EXPIRES_IN: 24h
-      PASSWORD_COST: 12
+      DATABASE_URL: ${{secrets.DATABASE_URL}}
+      TOKEN_KEY: ${{secrets.TOKEN_KEY}}
+      TEST_DATABASE_URL: ${{vars.TEST_DATABASE_URL}}
+      TOKEN_EXPIRES_IN: ${{vars.TOKEN_EXPIRES_IN}}
+      PASSWORD_COST: ${{secrets.PASSWORD_COST}}
 
 
     services:
@@ -66,3 +66,98 @@ jobs:
           name: playwright-report
           path: client/playwright-report/
           retention-days: 7
+
+  build-deploy:
+    needs: test
+    runs-on: ubuntu-22.04
+    if: github.ref == 'ref/heads/main'
+    env:
+      CLIENT_IMAGE_TAG: client-${{github.sha}}
+      SERVER_IMAGE_TAG: server-${{github.sha}}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{vars.AWS_REGION}}
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+
+      - name: Install Lightsail CLI helper
+        run: |
+          curl "https://awscli.amzonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
+          sudo curl "https://s3.eu-west-3.amazonaws.com/lightsailctl/linux-amd64/lightsailctl" -o "/usr/local/bin/lightsailctl"
+          sudo chmod +x /usr/local/bin/lightsailctl
+
+      - name: Build server image
+        run: docker build -t $SERVER_IMAGE_TAG -f ./server/Dockerfile
+
+      - name: Build client image
+        run: docker build --build-arg VITE_API_PATH=/api/v1/trpc -t $CLIENT_IMAGE_TAG -f ./client/Dockerfile
+
+      - name: Push server image
+        run: aws lightsail push-container-image --service-name ${{vars.AWS_LIGHTSAIL_SERVICE}} --label $SERVER_IMAGE_TAG --image $SERVER_IMAGE_TAG
+
+      - name: Push client image
+        run: aws lightsail push-container-image --service-name ${{vars.AWS_LIGHTSAIL_SERVICE}} --label $CLIENT_IMAGE_TAG --image $CLIENT_IMAGE_TAG
+
+      - name: Resolve Lightsail image names
+        run: |
+          echo "LIGHTSAIL_SERVER_IMAGE=$(aws lightsail get-container-image --service-name ${{vars.AWS_LIGHTSAIL_SERVICE}} | jq -r '.containerImages[] | select(.image | contains(".'$SERVER_IMAGE_TAG'")) | .image')" >> $GITHUB_ENV
+          echo "LIGHTSAIL_CLIENT_IMAGE=$(aws lightsail get-container-image --service-name ${{vars.AWS_LIGHTSAIL_SERVICE}} | jq -r '.containerImages[] | select(.image | contains(".'$CLIENT_IMAGE_TAG'")) | .image')" >> $GITHUB_ENV
+
+      - name: Create Lightsail deployment files
+        run: |
+          cat > containers.json << EOF
+          {
+          "client": {
+            "image": "${LIGHTSAIL_CLIENT_IMAGE}",
+            "command": [],
+            "ports": {
+              "80": "HTTP"
+            },
+            "environment": {
+              "API_PROXY_PASS": "http://localhost:3000"
+            }
+          },
+          "server": {
+            "image": "${{LIGHTSAIL_SERVER_IMAGE}}",
+            "ports": {
+              "3000":"HTTP"
+            },
+            "environment": {
+              "NODE_ENV": "production",
+              "PORT": "3000",
+              "DATABASE_URL": "${{secrets.DATABASE_URL}}",
+              "TOKEN_KEY": "${{secrets.TOKEN_KEY}}",
+              "TOKEN_EXPIRES_IN": "${{vars.TOKEN_EXPIRES_IN}}",
+              "PASSWORD_COST": "${{vars.PASSWORD_COST}}"
+              }
+            }
+          }
+          EOF
+          
+          cat > public-endpoint.json <<EOF
+          {
+            "containerName": "client",
+            "containerPort": 80,
+            "healthCheck": {
+              "intervalSeconds": 15,
+              "path": "/",
+              "successCodes": "200-499"
+            }
+          }
+          EOF
+
+      - name: Deploy to Lightsail
+        run: |
+          aws lightsail create-container-service-deployment \
+            --region eu-west-3 \
+            --service-name ${{vars.AWS_LIGHTSAIL_SERVICE}} \
+            --containers file://containers.json \
+            --public-endpoint file://public-endpoint.json
