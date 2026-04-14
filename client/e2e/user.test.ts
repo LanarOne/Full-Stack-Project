@@ -23,7 +23,8 @@ test.describe.serial('signup and login sequence', () => {
     await form.locator('input[data-testid="diet"]').fill(signupUser.diet)
     await form.locator('input[data-testid="allergies"]').fill(signupUser.allergies)
     await submitBtn.click()
-    await expect(errorMessage).toBeHidden()
+    const errorElt = page.getByText('Signup Failed')
+    await expect(errorElt).toBeHidden()
 
     await expect(page).toHaveURL('/login')
   })

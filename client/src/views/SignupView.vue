@@ -40,7 +40,7 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <PageForm heading="Sign Up!" form-label="Signup" @submit="handleSubmit" class="bg-black"
+  <PageForm heading="Sign Up!" form-label="Signup" @submit="handleSubmit" class="bg-black h-screen"
     ><fwb-input v-model="userForm.email" type="email" placeholder="Email" name="email" required />
     <fwb-input
       v-model="userForm.password"
