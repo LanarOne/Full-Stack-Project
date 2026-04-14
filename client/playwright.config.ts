@@ -97,14 +97,28 @@ export default defineConfig({
   // outputDir: 'test-results/',
 
   /* Run your local dev server before starting the tests */
-  webServer: {
-    /**
-     * Use the dev server by default for faster feedback loop.
-     * Use the preview server on CI for more realistic testing.
-     * Playwright will re-use the local server if there is already a dev-server running.
-     */
-    command: process.env.CI ? 'npm run preview' : 'npm run dev',
-    port: process.env.CI ? 4173 : 5173,
-    reuseExistingServer: !process.env.CI,
-  },
+  webServer: [
+    {
+      command: 'npm run start -w server',
+      url: 'http://localhost:3000/api/health',
+      reuseExistingServer: !process.env.CI,
+      stdout: 'ignore',
+      stderr: 'pipe',
+    },
+    {
+      /**
+       * Use the dev server by default for faster feedback loop.
+       * Use the preview server on CI for more realistic testing.
+       * Playwright will re-use the local server if there is already a dev-server running.
+       */
+      command: process.env.CI
+        ? 'npm run preview -w client -- --port 4173 --strictPort'
+        : 'npm run dev -w client -- --port 5173 --strictPort',
+      url: process.env.CI ? 'http://localhost:4173' : 'http://localhost:5173',
+      // port: process.env.CI ? 4173 : 5173,
+      reuseExistingServer: !process.env.CI,
+      stdout: 'ignore',
+      stderr: 'pipe',
+    },
+  ],
 })

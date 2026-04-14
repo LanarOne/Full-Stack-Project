@@ -54,9 +54,6 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium firefox webkit
 
-      - name: Start server for E2E tests
-        run: npm run dev -w server &
-
       - name: Build front end for E2E tests
         run: npm run build -w client
 
