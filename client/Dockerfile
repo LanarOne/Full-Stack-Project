@@ -13,7 +13,7 @@ COPY . .
 WORKDIR /app/client
 
 ARG VITE_API_PATH=/api/v1/trpc
-ENV VITE_API_PATH= $VITE_API_PATH
+ENV VITE_API_PATH=$VITE_API_PATH
 
 RUN npm run build
 
