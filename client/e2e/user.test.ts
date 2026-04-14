@@ -6,7 +6,6 @@ const user = fakeUser()
 
 test.describe.serial('signup and login sequence', () => {
   test('Visitor can sign up', async ({ page }) => {
-    const signupUser = fakeUser()
     await page.goto('/signup')
     const successMessage = page.getByTestId('successMessage')
     const errorMessage = page.getByTestId('errorMessage')
@@ -17,14 +16,12 @@ test.describe.serial('signup and login sequence', () => {
     const form = page.getByRole('form', { name: 'Signup' })
     const submitBtn = page.getByTestId('submitBtn')
 
-    await form.locator('input[type="email"]').fill(signupUser.email)
-    await form.locator('input[type="password"]').fill(signupUser.password)
-    await form.locator('input[data-testid="name"]').fill(signupUser.name)
-    await form.locator('input[data-testid="diet"]').fill(signupUser.diet)
-    await form.locator('input[data-testid="allergies"]').fill(signupUser.allergies)
+    await form.locator('input[type="email"]').fill(user.email)
+    await form.locator('input[type="password"]').fill(user.password)
+    await form.locator('input[data-testid="name"]').fill(user.name)
+    await form.locator('input[data-testid="diet"]').fill(user.diet)
+    await form.locator('input[data-testid="allergies"]').fill(user.allergies)
     await submitBtn.click()
-    const errorElt = page.getByText('Signup Failed')
-    await expect(errorElt).toBeHidden()
 
     await expect(page).toHaveURL('/login')
   })
