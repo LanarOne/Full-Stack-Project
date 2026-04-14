@@ -114,7 +114,8 @@ jobs:
 
       - name: Create containers.json
         run: |
-          echo '{
+          cat > containers.json <<EOF
+          {
           "client": {
             "image": "${{env.LIGHTSAIL_CLIENT_IMAGE}}",
             "command": [],
@@ -139,11 +140,13 @@ jobs:
               "PASSWORD_COST": "${{vars.PASSWORD_COST}}"
               }
             }
-          }' > containers.json
+          }
+          EOF
 
       - name: Create public-endpoint.json
         run: |
-          echo '{
+          cat > public-endpoint.json <<EOF
+          {
             "containerName": "client",
             "containerPort": 80,
             "healthCheck": {
@@ -151,7 +154,8 @@ jobs:
               "path": "/",
               "successCodes": "200-499"
             }
-          }' > public-endpoint.json
+          }
+          EOF
 
       - name: Deploy to Lightsail
         run: |
