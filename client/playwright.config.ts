@@ -99,7 +99,7 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: [
     {
-      command: 'npm run start -w server',
+      command: 'npm run dev -w server',
       url: 'http://localhost:3000/api/health',
       reuseExistingServer: !process.env.CI,
       stdout: 'ignore',

@@ -57,13 +57,6 @@ jobs:
       - name: Build front end for E2E tests
         run: npm run build -w client
 
-      - name: Wait for the server to start
-        uses: Jtalk/url-health-check-action@v4
-        with:
-          max-attempts: 5
-          retry-delay: '5s'
-          url: http://localhost:3000/api/health
-
       - name: Test client E2E
         run: npm run test:e2e -w client
 
