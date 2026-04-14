@@ -98,7 +98,7 @@ jobs:
         run: docker build -t $SERVER_IMAGE_TAG -f ./server/Dockerfile .
 
       - name: Build client image
-        run: docker build --build-arg VITE_API_PATH=/api/v1/trpc -t $CLIENT_IMAGE_TAG -f ./client/Dockerfile .
+        run: docker build --build-arg VITE_API_PATH=${{vars.VITE_API_PATH}} -t $CLIENT_IMAGE_TAG -f ./client/Dockerfile .
 
       - name: Push server image
         run: aws lightsail push-container-image --service-name ${{vars.AWS_LIGHTSAIL_SERVICE}} --label $SERVER_IMAGE_TAG --image $SERVER_IMAGE_TAG --output yaml
