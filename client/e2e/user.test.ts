@@ -56,7 +56,8 @@ test.describe.serial('signup and login sequence', () => {
     await signUpForm.locator('input[data-testid="diet"]').fill(user.diet)
     await signUpForm.locator('input[data-testid="allergies"]').fill(user.allergies)
     await submitBtn.click()
-    await page.goto('/login')
+
+    await expect(page).toHaveURL('/login')
 
     const successMessage = page.getByTestId('successMessage')
     await expect(successMessage).toBeHidden()
