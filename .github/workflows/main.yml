@@ -126,7 +126,7 @@ jobs:
             }
           },
           "server": {
-            "image": "${{LIGHTSAIL_SERVER_IMAGE}}",
+            "image": "${LIGHTSAIL_SERVER_IMAGE}",
             "ports": {
               "3000":"HTTP"
             },
