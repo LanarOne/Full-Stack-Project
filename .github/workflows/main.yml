@@ -101,11 +101,18 @@ jobs:
         run: docker build --build-arg VITE_API_PATH=${{vars.VITE_API_PATH}} -t $CLIENT_IMAGE_TAG -f ./client/Dockerfile .
 
       - name: Push server image
-        run: aws lightsail push-container-image --region ${{vars.AWS_REGION}} --service-name ${{vars.AWS_LIGHTSAIL_SERVICE}} --label $SERVER_IMAGE_TAG --image $SERVER_IMAGE_TAG --output yaml
+        run: aws lightsail push-container-image --region ${{vars.AWS_REGION}} --service-name ${{vars.AWS_LIGHTSAIL_SERVICE}} --label $SERVER_IMAGE_TAG --image $SERVER_IMAGE_TAG:latest --output yaml
 
       - name: Push client image
-        run: aws lightsail push-container-image --region ${{vars.AWS_REGION}} --service-name ${{vars.AWS_LIGHTSAIL_SERVICE}} --label $CLIENT_IMAGE_TAG --image $CLIENT_IMAGE_TAG --output yaml
+        run: aws lightsail push-container-image --region ${{vars.AWS_REGION}} --service-name ${{vars.AWS_LIGHTSAIL_SERVICE}} --label $CLIENT_IMAGE_TAG --image $CLIENT_IMAGE_TAG:latest --output yaml
 
+      - name: Show registered Lightsail images
+        run: |
+          aws lightsail get-container-images \
+            --region ${{ vars.AWS_REGION }} \
+            --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }} \
+            --output json
+          
       - name: Create containers.json
         run: |
           cat > containers.json <<EOF
