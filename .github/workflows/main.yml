@@ -72,8 +72,8 @@ jobs:
     runs-on: ubuntu-22.04
     if: github.ref == 'refs/heads/main'
     env:
-      CLIENT_IMAGE_TAG: client-${{github.sha}}
-      SERVER_IMAGE_TAG: server-${{github.sha}}
+      CLIENT_IMAGE_TAG: client
+      SERVER_IMAGE_TAG: server
 
     steps:
       - name: Checkout repo
@@ -95,16 +95,16 @@ jobs:
           sudo chmod +x /usr/local/bin/lightsailctl
 
       - name: Build server image
-        run: docker build -t $SERVER_IMAGE_TAG -f ./server/Dockerfile .
+        run: docker build -t server:latest -f ./server/Dockerfile .
 
       - name: Build client image
-        run: docker build --build-arg VITE_API_PATH=${{vars.VITE_API_PATH}} -t $CLIENT_IMAGE_TAG -f ./client/Dockerfile .
+        run: docker build --build-arg VITE_API_PATH=${{vars.VITE_API_PATH}} -t client:latest -f ./client/Dockerfile .
 
       - name: Push server image
-        run: aws lightsail push-container-image --region ${{vars.AWS_REGION}} --service-name ${{vars.AWS_LIGHTSAIL_SERVICE}} --label $SERVER_IMAGE_TAG --image $SERVER_IMAGE_TAG:latest --output yaml
+        run: aws lightsail push-container-image --region ${{vars.AWS_REGION}} --service-name ${{vars.AWS_LIGHTSAIL_SERVICE}} --label $SERVER_IMAGE_TAG --image server:latest --output yaml
 
       - name: Push client image
-        run: aws lightsail push-container-image --region ${{vars.AWS_REGION}} --service-name ${{vars.AWS_LIGHTSAIL_SERVICE}} --label $CLIENT_IMAGE_TAG --image $CLIENT_IMAGE_TAG:latest --output yaml
+        run: aws lightsail push-container-image --region ${{vars.AWS_REGION}} --service-name ${{vars.AWS_LIGHTSAIL_SERVICE}} --label $CLIENT_IMAGE_TAG --image client:latest --output yaml
 
       - name: Show registered Lightsail images
         run: |
@@ -112,13 +112,13 @@ jobs:
             --region ${{ vars.AWS_REGION }} \
             --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }} \
             --output json
-          
+
       - name: Create containers.json
         run: |
           cat > containers.json <<EOF
           {
           "client": {
-            "image": ":${{vars.AWS_LIGHTSAIL_SERVICE}}.${{env.CLIENT_IMAGE_TAG}}.latest",
+            "image": ":${{vars.AWS_LIGHTSAIL_SERVICE}}.client.latest",
             "command": [],
             "ports": {
               "80": "HTTP"
@@ -128,7 +128,7 @@ jobs:
             }
           },
           "server": {
-            "image": ":${{vars.AWS_LIGHTSAIL_SERVICE}}.${{env.SERVER_IMAGE_TAG}}.latest",
+            "image": ":${{vars.AWS_LIGHTSAIL_SERVICE}}.server.latest",
             "ports": {
               "3000":"HTTP"
             },
