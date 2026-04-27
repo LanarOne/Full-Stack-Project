@@ -56,7 +56,7 @@ describe('Finds an Household by ID', () => {
 
   it('should throw if the household does not exist', async () => {
     await expect(
-      repository.findById(255)
+      repository.findById(1312)
     ).rejects.toThrow(
       expect.objectContaining({
         message: 'no result',
@@ -107,7 +107,7 @@ describe('Updates the name of an Household', () => {
 
   it('should throw if the household does not exist', async () => {
     await expect(
-      repository.update(255, {
+      repository.update(1312, {
         name: 'some name',
       })
     ).rejects.toThrow(
@@ -150,7 +150,7 @@ describe('Deletes an Household', () => {
 
   it('should throw if the household does not exist', async () => {
     await expect(
-      repository.delete(255)
+      repository.delete(1312)
     ).rejects.toThrow(
       expect.objectContaining({
         message: 'no result',

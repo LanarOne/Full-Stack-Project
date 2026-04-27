@@ -9,6 +9,8 @@ import { useUserStore } from '@/stores/user.ts'
 import AddIngredientView from '@/views/AddIngredientView.vue'
 import AddRecipeView from '@/views/AddRecipeView.vue'
 import { useHouseholdStore } from '@/stores/household.ts'
+import StorageView from "@/views/StorageView.vue";
+import AddMemberView from "@/views/AddMemberView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -52,6 +54,16 @@ const router = createRouter({
           name: 'create-recipe',
           component: AddRecipeView,
         },
+        {
+          path: 'household/:id/storage',
+          name: 'storage',
+          component: StorageView
+        },
+        {
+          path: 'household/:id/add-member',
+          name: 'add-member',
+          component: AddMemberView
+        }
       ],
     },
   ],

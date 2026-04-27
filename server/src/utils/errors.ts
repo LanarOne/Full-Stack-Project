@@ -5,6 +5,9 @@ import { ZodError } from 'zod'
 export function handleKyselyErrors(
   error: unknown
 ): never {
+    if (error instanceof ZodError) {
+        throw error
+    }
   if (!(error instanceof Error)) {
     throw error
   }
@@ -76,9 +79,6 @@ export function handleKyselyErrors(
     }
   }
 
-  if (error instanceof ZodError) {
-    throw error
-  }
 
   throw new TRPCError({
     code: 'INTERNAL_SERVER_ERROR',

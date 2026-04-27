@@ -30,8 +30,7 @@ export async function signupNewUser(
   try {
     await trpc.user.signup.mutate(userLogin)
   } catch (error) {
-    // nothing to see here
-    console.error(error)
+    if (error?.data?.code !== 'BAD_REQUEST') throw error
   }
 
   const loginResponse = await trpc.user.login.mutate(userLogin)

@@ -9,6 +9,7 @@ import bcrypt from 'bcrypt'
 import { prepareTokenPayload } from '@server/trpc/tokenPayload.js'
 import jsonwebtoken from 'jsonwebtoken'
 import { handleKyselyErrors } from '@server/utils/errors.js'
+import logger from "@server/logger.js";
 
 const { tokenKey } = config.auth
 
@@ -38,6 +39,7 @@ export default publicProcedure
           )
 
         if (!passwordMatch) {
+            logger.warn('Wrong password')
           throw new TRPCError({
             code: 'UNAUTHORIZED',
             message: 'Incorrect password',
@@ -62,6 +64,7 @@ export default publicProcedure
           ...safeUser
         } = user
 
+          logger.info({userId: user.id}, 'User logged in')
         return {
           token,
           user: safeUser as UserPublic,

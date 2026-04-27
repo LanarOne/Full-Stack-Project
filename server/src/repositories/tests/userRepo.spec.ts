@@ -118,7 +118,7 @@ describe('Finds a user by ID', () => {
 
   it('should throw if the user does not exist', async () => {
     await expect(
-      repository.findById(255)
+      repository.findById(1312)
     ).rejects.toThrow(
       expect.objectContaining({
         message: 'no result',
@@ -170,6 +170,37 @@ describe('Finds a user by email', () => {
       })
     )
   })
+})
+
+describe('Finds a public user by email', () => {
+    it('should find a public user by email correctly', async () => {
+        const result = await repository.inviteByEmail(
+            user.email
+        )
+
+        expect(result).toBeDefined()
+        expect(result.name).toBe(user.name)
+    })
+
+    it('should throw if the email does not exist in the database', async () => {
+        await expect(
+            repository.inviteByEmail('some@email.com')
+        ).rejects.toThrow(
+            expect.objectContaining({
+                message: 'no result',
+            })
+        )
+    })
+
+    it('should throw if the email is poorly formatted', async () => {
+        await expect(
+            repository.inviteByEmail('not.AnEmail.com')
+        ).rejects.toThrow(
+            expect.objectContaining({
+                message: 'no result',
+            })
+        )
+    })
 })
 
 describe('Updates a user', () => {
@@ -312,7 +343,7 @@ describe('Deletes a user', () => {
 
   it('should throw if the user does not exist', async () => {
     await expect(
-      repository.delete(255)
+      repository.delete(1312)
     ).rejects.toThrow(
       expect.objectContaining({
         message: 'no result',

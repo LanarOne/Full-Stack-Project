@@ -78,7 +78,7 @@ async function handleSubmit() {
       note: ingredientForm.value.note,
     })
 
-    await router.push({ name: 'Household', params: { id: householdStore.currentHHId } })
+    await router.push(`/household/${householdStore.currentHHId}`)
   } catch (error) {
     userStore.setError(error instanceof Error ? error.message : 'Creation failed')
   } finally {
@@ -110,7 +110,7 @@ async function handleSubmit() {
       name="quantity"
       required
     />
-    <fwb-select v-model="ingredientForm.unit" :options="units" label="Select a unit" required />
+    <fwb-select id="unit" name="unit" v-model="ingredientForm.unit" :options="units" label="Select a unit" required data-testid="unitSelect" />
     <fwb-input
       v-model="ingredientForm.purchaseDate"
       label="Ingredient purchaseDate"
@@ -126,6 +126,8 @@ async function handleSubmit() {
       required
     />
     <fwb-select
+      name="storage"
+      id="storage"
       v-model="ingredientForm.storage"
       :options="storages"
       label="Select a storage"

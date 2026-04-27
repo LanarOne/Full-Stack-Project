@@ -5,6 +5,7 @@ import { userSchema } from '@server/entities/user.js'
 import { hash } from 'bcrypt'
 import config from '@server/config.js'
 import { handleKyselyErrors } from '@server/utils/errors.js'
+import logger from "@server/logger.js";
 
 export default publicProcedure
   .use(provideRepos({ userRepo }))
@@ -44,6 +45,7 @@ export default publicProcedure
           handleKyselyErrors(error)
         )
 
+        logger.info({userId: created.id}, 'New user signed up')
       return {
         id: created.id,
       }

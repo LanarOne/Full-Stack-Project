@@ -4,6 +4,7 @@ import { TRPCError } from '@trpc/server'
 import { getHouseholdFromToken } from '@server/helpers/tokenHelpers.js'
 import provideRepos from '@server/trpc/provideRepos/index.js'
 import { memberRepo } from '@server/repositories/memberRepo.js'
+import logger from "@server/logger.js";
 
 export const authedHouseholdProcedure =
   authedProcedure
@@ -46,6 +47,7 @@ export const authedHouseholdProcedure =
         getHouseholdFromToken(token)
 
       if (!authedHousehold) {
+          logger.warn({url:ctx.req?.url }, 'Invalid token')
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Invalid token',
@@ -59,6 +61,7 @@ export const authedHouseholdProcedure =
         })
 
       if (!userIsInHousehold) {
+          logger.warn({userId: ctx.authUser.id, householdId: authedHousehold.id}, 'User not in Household')
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Invalid token',

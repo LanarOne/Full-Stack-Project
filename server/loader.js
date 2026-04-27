@@ -6,7 +6,7 @@ import {
 import { cwd } from 'node:process'
 import { isBuiltin } from 'node:module'
 import { dirname } from 'node:path'
-import resolveCallback from 'resolve/async.js'
+import resolveCallback from 'resolve/async'
 
 const resolveAsync = promisify(resolveCallback)
 

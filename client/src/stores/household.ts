@@ -9,12 +9,13 @@ export const useHouseholdStore = defineStore('household', () => {
   const currentHHId = ref<number | null>(null)
   const isLoading = ref(false)
   const error = ref<string | null>(null)
+  const isAdmin = ref(false)
 
   async function fetchHousehold() {
     isLoading.value = true
 
     try {
-      const isMember = await trpc.member.getByUserId.query()
+      const isMember = await trpc.member.getByUserId.query(undefined)
 
       const householdIds = [...new Set(isMember.map((member) => member.householdId))]
 
@@ -28,10 +29,17 @@ export const useHouseholdStore = defineStore('household', () => {
       isLoading.value = false
     }
   }
+
+
   async function getCurrent() {
     isLoading.value = true
     try {
       current.value = await trpc.household.getById.query({ id: Number(currentHHId.value) })
+      const currentAdmin = await trpc.member.getOne.query({ householdId: Number(currentHHId.value) })
+
+      if (currentAdmin.result.roleId === 1) {
+        isAdmin.value = true
+      }
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Unknown error'
     } finally {
@@ -57,6 +65,7 @@ export const useHouseholdStore = defineStore('household', () => {
     currentHHId,
     getCurrent,
     current,
+    isAdmin
   }
 })
 

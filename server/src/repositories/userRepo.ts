@@ -43,6 +43,10 @@ export function userRepo(db: Database) {
         .executeTakeFirstOrThrow()
     },
 
+      async inviteByEmail(email: string): Promise<UserPublic> {
+        return db.selectFrom('user').select(userKeysPublic).where('email', '=', email).executeTakeFirstOrThrow()
+      },
+
     async update(
       user: Updateable<User>
     ): Promise<UserPublic> {

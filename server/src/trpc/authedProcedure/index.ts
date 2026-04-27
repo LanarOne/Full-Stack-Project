@@ -2,6 +2,7 @@ import config from '@server/config.js'
 import { publicProcedure } from '@server/trpc/index.js'
 import { TRPCError } from '@trpc/server'
 import { getUserFromToken } from '@server/helpers/tokenHelpers.js'
+import logger from "@server/logger.js";
 
 export const authedProcedure =
   publicProcedure.use(({ ctx, next }) => {
@@ -40,6 +41,7 @@ export const authedProcedure =
     const authUser = getUserFromToken(token)
 
     if (!authUser) {
+        logger.warn({url:ctx.req?.url }, 'Invalid token')
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: 'Invalid token.',
