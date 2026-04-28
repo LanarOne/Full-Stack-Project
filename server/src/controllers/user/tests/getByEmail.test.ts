@@ -29,7 +29,7 @@ describe('User getByEmail controller', () => {
             requestContext({ db })
         )
 
-        await expect(getByEmail({id:otherUser.id})).rejects.toThrow(
+        await expect(getByEmail({email:otherUser.email})).rejects.toThrow(
             expect.objectContaining({
                 message: 'Unauthenticated. Please log in',
             })
