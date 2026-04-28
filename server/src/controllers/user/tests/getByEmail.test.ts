@@ -9,7 +9,6 @@ import {
     requestContext,
 } from '@server/tests/utils/context.js'
 import userRouter from '../index.js'
-import getByEmail from "@server/controllers/user/getByEmail.js";
 
 const db = await wrapInRollbacks(
     createTestDatabase()
