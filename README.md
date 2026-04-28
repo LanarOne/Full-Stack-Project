@@ -14,41 +14,22 @@ It allows the users to gather themselves as Households and to share the state of
 **Runtime**
 - Node.js
 
+**Frontend**
+- Vue 3
+- Flowbite
+- Pinia
+
 **Backend**
 - Express
 - Kysely
-- PostgreSQL
+- Neon (PostgreSQL)
 - tRPC
+- Pino (logging)
 
 **Testing**
 - Vitest
 - Supertest
+- Playwright (E2E)
 
 ## Usage
-Clone the repository somewhere on your computer.
-There is a .env.example file at the root of the project, remove the ".example" from it and get the data you need, all fields are mandatory!
-
-1. Create a PostgreSQL database
-2. Fill up the .env file with the required data, run up the followings in your console
-3. Run ```npm run migrate:latest``` to build up the database
-4. Run ```npm install --legacy-peer-deps``` to install all the dependencies
-5. Run ```npm run gen:types``` to create the database Types
-6. Run ```npm run build``` to generate the dist folder with the js compiled files
-7. Finally run ```npm run start``` to launch the server and start using the app
-
-## Scripts
-- ```npm run build``` : Compiles the typescript files into javascript files, creating a "dist" folder for production
-- ```npm run coverage``` : Runs the test coverage from Vitest
-- ```npm run dev``` : Starts the development environment
-- ```npm run format``` : Runs Prettier --write on the project to format the code according to the AirBnB config
-- ```npm run gen:types``` : Runs the Kysely generation for database types (must be ran after creating the database)
-- ```npm run lint``` : Checks quality and style of the code
-- ```npm run migrate:latest``` : Runs the Kysely migrations (if any)
-- ```npm run latest:prod``` : Runs the Kysely migrations (if any) for a production environment
-- ```npm migrate:new``` : Creates a new migration file with correct timestamp
-- ```npm run node-es``` : Runs Node with a custom loader to modify the TypeScript import at runtime
-- ```npm run prod``` : Runs the migrations (if any) and runs production environment
-- ```npm run start``` : Starts the production environment
-- ```npm run start:again``` : Start the production environment without the custom loader
-- ```npm run test``` : Runs the test suite
-- ```npm run typecheck``` : Checks for TypeScript, does not write but returns typing errors
+The app is running [here](https://household-app.zsn6zwz8vsx1y.eu-west-3.cs.amazonlightsail.com/login)

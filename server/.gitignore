@@ -7,3 +7,5 @@ coverage
 *.local
 data/database*
 .env
+.idea
+.agents
