@@ -138,7 +138,7 @@ jobs:
               "DATABASE_URL": "${{secrets.DATABASE_URL}}",
               "TOKEN_KEY": "${{secrets.TOKEN_KEY}}",
               "TOKEN_EXPIRES_IN": "${{vars.TOKEN_EXPIRES_IN}}",
-              "PASSWORD_COST": "${{vars.PASSWORD_COST}}"
+              "PASSWORD_COST": "${{secrets.PASSWORD_COST}}"
               }
             }
           }
