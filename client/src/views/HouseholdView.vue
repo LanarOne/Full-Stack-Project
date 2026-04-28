@@ -37,7 +37,7 @@ async function deleteMember(userId: number) {
       membersId.map((memberId) => trpc.user.getByGivenId.query({id:Number(memberId)}))
     )
   } catch (error) {
-    householdStore.error = error
+    householdStore.error = error instanceof Error?error.message : 'Something went wrong'
   } finally {
     householdStore.isLoading = false
   }
