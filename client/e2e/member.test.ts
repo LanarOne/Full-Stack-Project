@@ -1,6 +1,6 @@
-import {fakeHousehold, fakeUser} from "./fakes.js";
+import {fakeHousehold, fakeUser} from "./utils/fakes.js";
 import {expect, test} from "@playwright/test";
-import {asUser, signupNewUser, trpc} from "./api.js";
+import {asUser, signupNewUser, trpc} from "./utils/api.js";
 
 
 test.describe.serial('Create household and invite another user in', ()=>{
