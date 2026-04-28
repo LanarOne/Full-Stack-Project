@@ -11,7 +11,7 @@ import {
 } from '@/utils/auth.ts'
 import { useHouseholdStore } from '@/stores/household.ts'
 import { FwbButton, FwbCard, } from 'flowbite-vue'
-import type {MemberPublic, RecipePublic, UserPublic} from '@server/shared/types.ts'
+import type { RecipePublic, UserPublic} from '@server/shared/types.ts'
 
 const route = useRoute()
 const router = useRouter()
