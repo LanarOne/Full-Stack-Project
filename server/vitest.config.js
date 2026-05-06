@@ -15,6 +15,8 @@ export default defineConfig({
         '**/src/trpc/index.ts',
         '**/src/repositories/index.ts',
         '**/*/index.ts',
+        '**/src/shared/**',
+        '**/src/tests/**',
       ],
     },
     threads: false,

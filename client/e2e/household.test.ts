@@ -49,7 +49,7 @@ test.describe.serial('create a household and navigate to its page', () => {
       const heading = page.getByTestId('householdHeading')
       const failedHeading = page.getByTestId('failedHeading')
 
-      await expect(heading).toBeDefined()
+      expect(heading).toBeDefined()
       await expect(failedHeading).toBeHidden()
       await expect(page).toHaveURL(`/household/${household.id}`)
       await expect(heading).toHaveText(/'s Household ! /i)
@@ -91,7 +91,7 @@ test.describe.serial('create a household and navigate to its page', () => {
 
       await expect(page).toHaveURL(/household/i)
 
-      const newRecipe = page.getByText('Some recipes name')
+      const newRecipe = page.getByText('Some recipes name') // ALWAYS PASSING
 
       expect(newRecipe).toBeDefined()
     })

@@ -11,6 +11,6 @@ export default router({
   login,
   update,
   getById,
-    getByGivenId,
-    getByEmail
+  getByGivenId,
+  getByEmail,
 })

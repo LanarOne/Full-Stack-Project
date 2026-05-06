@@ -3,12 +3,11 @@ import { createExpressMiddleware } from '@trpc/server/adapters/express'
 import type { CreateExpressContextOptions } from '@trpc/server/adapters/express'
 import cors from 'cors'
 import { renderTrpcPanel } from 'trpc-panel'
+import logger from '@server/logger.js'
 import config from './config.js'
 import type { Context } from './trpc/index.js'
 import { appRouter } from './controllers/index.js'
 import type { Database } from './database/index.js'
-import logger from "@server/logger.js";
-
 
 export default function createApp(db: Database) {
   const app = express()
@@ -16,8 +15,8 @@ export default function createApp(db: Database) {
   app.use(cors())
   app.use(express.json())
 
-
   app.use('/api/health', (_, res) => {
+    // basic SQL query to add
     res.status(200).send('OK')
   })
 
@@ -35,19 +34,28 @@ export default function createApp(db: Database) {
 
       router: appRouter,
 
-        onError({error, path, type, input, ctx, req}) {
-          logger.error({
-              err: error,
-              path,
-              type,
-              input,
-              userId: ctx?.authUser?.id,
-              householdId: ctx?.authHousehold?.id,
-              method: req.method,
-              url: req.url,
+      onError({
+        error,
+        path,
+        type,
+        input,
+        ctx,
+        req,
+      }) {
+        logger.error(
+          {
+            err: error,
+            path,
+            type,
+            input,
+            userId: ctx?.authUser?.id,
+            householdId: ctx?.authHousehold?.id,
+            method: req.method,
+            url: req.url,
           },
-              'tRPC request failed')
-        }
+          'tRPC request failed'
+        )
+      },
     })
   )
 
