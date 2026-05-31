@@ -27,7 +27,7 @@ export async function up(db: Kysely<any>) {
 ALTER TABLE rcp_ingr
 ADD CONSTRAINT rcp_ingr_unit_check
 CHECK ( unit IN ('grams', 'unit', 'ml'))
-`
+`.execute(db)
 }
 
 export async function down(db: Kysely<any>) {

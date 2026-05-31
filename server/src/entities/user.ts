@@ -26,7 +26,7 @@ export const userSchema = z.object({
     .trim(),
   diet: z.nullable(z.string()),
   allergies: z.nullable(z.string()),
-  profilePicture: z.nullable(z.string().url()),
+  profilePicture: z.string().url().optional(),
 })
 
 export const userKeysAll = Object.keys(

@@ -13,7 +13,7 @@ const userForm = ref({
   name: '',
   diet: '',
   allergies: '',
-  profilePicture: '',
+  profilePicture: null,
 })
 
 const succeeded = ref(false)
