@@ -18,6 +18,7 @@ const schema = z
       .default('development'),
     port: z.coerce.number().default(3000),
 
+    endpoint: z.string(),
     auth: z.object({
       tokenKey: z.string().default(() => {
         if (isDevTest) {
@@ -32,6 +33,12 @@ const schema = z
       passwordCost: z.coerce
         .number()
         .default(isDevTest ? 6 : 12),
+      cookieName: z
+        .string()
+        .default('auth_token'),
+      cookieMaxAgeMs: z.coerce
+        .number()
+        .default(1000 * 60 * 60 * 24 * 7),
     }),
 
     database: z.object({
@@ -43,11 +50,15 @@ const schema = z
 const config = schema.parse({
   env: env.NODE_ENV,
   port: env.PORT,
+  endpoint: env.TRPC_ROUTE,
 
   auth: {
     tokenKey: env.TOKEN_KEY,
     expiresIn: env.TOKEN_EXPIRES_IN,
     passwordCost: env.PASSWORD_COST,
+    cookieName: isDevTest
+      ? 'auth_token'
+      : env.COOKIE_NAME,
   },
 
   database: {

@@ -173,34 +173,34 @@ describe('Finds a user by email', () => {
 })
 
 describe('Finds a public user by email', () => {
-    it('should find a public user by email correctly', async () => {
-        const result = await repository.inviteByEmail(
-            user.email
-        )
+  it('should find a public user by email correctly', async () => {
+    const result = await repository.inviteByEmail(
+      user.email
+    )
 
-        expect(result).toBeDefined()
-        expect(result.name).toBe(user.name)
-    })
+    expect(result).toBeDefined()
+    expect(result.name).toBe(user.name)
+  })
 
-    it('should throw if the email does not exist in the database', async () => {
-        await expect(
-            repository.inviteByEmail('some@email.com')
-        ).rejects.toThrow(
-            expect.objectContaining({
-                message: 'no result',
-            })
-        )
-    })
+  it('should throw if the email does not exist in the database', async () => {
+    await expect(
+      repository.inviteByEmail('some@email.com')
+    ).rejects.toThrow(
+      expect.objectContaining({
+        message: 'no result',
+      })
+    )
+  })
 
-    it('should throw if the email is poorly formatted', async () => {
-        await expect(
-            repository.inviteByEmail('not.AnEmail.com')
-        ).rejects.toThrow(
-            expect.objectContaining({
-                message: 'no result',
-            })
-        )
-    })
+  it('should throw if the email is poorly formatted', async () => {
+    await expect(
+      repository.inviteByEmail('not.AnEmail.com')
+    ).rejects.toThrow(
+      expect.objectContaining({
+        message: 'no result',
+      })
+    )
+  })
 })
 
 describe('Updates a user', () => {
@@ -246,7 +246,7 @@ describe('Updates a user', () => {
   it('should throw if the user does not exist', async () => {
     await expect(
       repository.update({
-        id: 1,
+        id: 1312,
         name: 'some other name',
       } as any as Updateable<User>)
     ).rejects.toThrow(

@@ -22,7 +22,7 @@ const isLoading = ref(false)
 
 async function handleSubmit() {
   isLoading.value = true
-  if (userForm.value.profilePicture === '') {
+  if (!userForm.value.profilePicture) {
     userForm.value.profilePicture = 'http://placeholderimage.com'
   }
   try {

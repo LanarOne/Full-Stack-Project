@@ -12,15 +12,16 @@ import {
   fakeMember,
   fakeUser,
 } from '@server/entities/test/fakes.js'
+import { z } from 'zod'
 import {
   createCallerFactory,
   router,
 } from '../index.js'
 
 const routes = router({
-  testCall: authedHouseholdProcedure.query(
-    () => 'passed'
-  ),
+  testCall: authedHouseholdProcedure
+    .input(z.object({ householdId: z.number() }))
+    .query(() => 'passed'),
 })
 
 const createCaller = createCallerFactory(routes)
@@ -29,46 +30,45 @@ const db = await wrapInRollbacks(
   createTestDatabase()
 )
 
-const VALID_TOKEN = 'valid-token'
-
 const [user] = await insertAll(db, 'user', [
   fakeUser(),
 ])
-const [household] = await insertAll(
-  db,
-  'household',
-  [fakeHousehold()]
-)
-
-vi.mock('jsonwebtoken', () => ({
-  default: {
-    verify: (token: string) => {
-      if (token !== VALID_TOKEN)
-        throw new Error('Invalid token')
-      return {
-        user: {
-          id: user.id,
-          email: 'tata@coco.fr',
-        },
-        household: { id: household.id },
-      }
-    },
-  },
-}))
-
-const authedHousehold = createCaller(
-  authContext({ db })
-)
+const [household, otherHousehold] =
+  await insertAll(db, 'household', [
+    fakeHousehold(),
+    fakeHousehold(),
+  ])
 
 describe('Authenticated Household Procedure', () => {
   it('should pass if user and the household are already authed ', async () => {
+    const authedHousehold = createCaller(
+      authContext({
+        db,
+        authUser: {
+          id: user.id,
+          email: user.email,
+        },
+        authHousehold: { id: household.id },
+      })
+    )
     const response =
-      await authedHousehold.testCall()
+      await authedHousehold.testCall({
+        householdId: household.id,
+      })
 
     expect(response).toEqual('passed')
   })
 
-  it('should pass if user provides a valid token', async () => {
+  it('should pass if authed user belongs to the requested household', async () => {
+    const caller = createCaller(
+      authContext({
+        db,
+        authUser: {
+          id: user.id,
+          email: user.email,
+        },
+      })
+    )
     await insertAll(db, 'member', [
       fakeMember({
         userId: user.id,
@@ -76,15 +76,10 @@ describe('Authenticated Household Procedure', () => {
         roleId: 1,
       }),
     ])
-    const usingValidToken = createCaller({
-      db,
-      req: {
-        header: () => `Bearer ${VALID_TOKEN}`,
-      } as any,
-    })
 
-    const response =
-      await usingValidToken.testCall()
+    const response = await caller.testCall({
+      householdId: household.id,
+    })
 
     expect(response).toEqual('passed')
   })
@@ -95,37 +90,55 @@ describe('Authenticated Household Procedure', () => {
     )
 
     await expect(
-      unauthed.testCall()
+      unauthed.testCall({
+        householdId: household.id,
+      })
     ).rejects.toThrow(
       /login|log in|logged in|authenticate|unauthorized/i
     )
   })
 
-  it('should throw an error if it is run without access to headers', async () => {
-    const invalidToken = createCaller(
-      requestContext({
+  it('should throw an error if the householdId is missing', async () => {
+    const caller = createCaller(
+      authContext({
         db,
-        req: undefined as any,
+        authUser: {
+          id: user.id,
+          email: user.email,
+        },
       })
     )
 
     await expect(
-      invalidToken.testCall()
-    ).rejects.toThrow(/Express/i)
+      caller.testCall({} as any)
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'BAD_REQUEST',
+        name: 'TRPCError',
+      })
+    )
   })
 
-  it('should throw an error if user provides invalid token', async () => {
-    const invalidToken = createCaller(
-      requestContext({
+  it('should throw an error if the user is not a member of the household', async () => {
+    const caller = createCaller(
+      authContext({
         db,
-        req: {
-          header: () => 'Bearer invalid-token',
-        } as any,
+        authUser: {
+          id: user.id,
+          email: user.email,
+        },
       })
     )
 
     await expect(
-      invalidToken.testCall()
-    ).rejects.toThrow(/token/i)
+      caller.testCall({
+        householdId: otherHousehold.id,
+      })
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'INTERNAL_SERVER_ERROR',
+        name: 'TRPCError',
+      })
+    )
   })
 })

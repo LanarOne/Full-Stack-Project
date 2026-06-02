@@ -9,7 +9,7 @@ import bcrypt from 'bcrypt'
 import { prepareTokenPayload } from '@server/trpc/tokenPayload.js'
 import jsonwebtoken from 'jsonwebtoken'
 import { handleKyselyErrors } from '@server/utils/errors.js'
-import logger from "@server/logger.js";
+import logger from '@server/logger.js'
 
 const { tokenKey } = config.auth
 
@@ -39,7 +39,7 @@ export default publicProcedure
           )
 
         if (!passwordMatch) {
-            logger.warn('Wrong password')
+          logger.warn('Wrong password')
           throw new TRPCError({
             code: 'UNAUTHORIZED',
             message: 'Incorrect password',
@@ -59,14 +59,35 @@ export default publicProcedure
           } as jsonwebtoken.SignOptions
         )
 
+        if (!ctx.res) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message:
+              'Missing Express Response Object',
+          })
+        }
+        ctx.res.cookie(
+          config.auth.cookieName,
+          token,
+          {
+            httpOnly: true,
+            secure: config.env === 'production',
+            sameSite: 'lax',
+            path: '/',
+            maxAge: config.auth.cookieMaxAgeMs,
+          }
+        )
+
         const {
           password: passWord,
           ...safeUser
         } = user
 
-          logger.info({userId: user.id}, 'User logged in')
+        logger.info(
+          { userId: user.id },
+          'User logged in'
+        )
         return {
-          token,
           user: safeUser as UserPublic,
         }
       } catch (error) {

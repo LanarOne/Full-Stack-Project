@@ -16,6 +16,7 @@ export default authedHouseholdProcedure
   .input(
     ingredientSchema
       .pick({
+        householdId: true,
         name: true,
         type: true,
         quantity: true,

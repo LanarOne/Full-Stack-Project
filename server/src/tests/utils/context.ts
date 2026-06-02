@@ -6,10 +6,7 @@ import {
   type AuthUser,
   authUserSchema,
 } from '@server/entities/user.js'
-import {
-  fakeAuthHousehold,
-  fakeAuthUser,
-} from '@server/entities/test/fakes.js'
+import { fakeAuthUser } from '@server/entities/test/fakes.js'
 import {
   type AuthHousehold,
   authHouseholdSchema,
@@ -31,12 +28,16 @@ export const requestContext = (
 export const authContext = (
   context: Partial<Context> & ContextMinimal,
   user: AuthUser = fakeAuthUser(),
-  household: AuthHousehold = fakeAuthHousehold()
+  household?: AuthHousehold
 ): Context => ({
   authUser: authUserSchema.parse(user),
-  authHousehold:
-    authHouseholdSchema.parse(household),
-  ...context,
+  ...(household
+    ? {
+        authHousehold:
+          authHouseholdSchema.parse(household),
+      }
+    : {}),
+  ...requestContext(context),
 })
 
 export const authRepoContext = (

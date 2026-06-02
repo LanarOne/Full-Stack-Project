@@ -5,8 +5,6 @@ import { ref } from 'vue'
 import { trpc } from '@/trpc.ts'
 import PageForm from '@/components/PageForm.vue'
 import { FwbInput, FwbAlert, FwbButton } from 'flowbite-vue'
-import { storeAccessToken } from '@/utils/auth.ts'
-import type { UserPublic } from '@server/entities/user.ts'
 
 const router = useRouter()
 
@@ -23,19 +21,17 @@ const isLoading = ref(false)
 
 async function submitLogin() {
   isLoading.value = true
+  errorMessage.value = null
+
   try {
-    const result = await trpc.user.login.mutate(userForm.value)
+    await trpc.user.login.mutate(userForm.value)
+    await userStore.fetchUser()
 
     succeeded.value = true
 
-    userStore.setUser(result.user as UserPublic)
-    userStore.setToken(result.token)
-
-    storeAccessToken(window.localStorage, result.token)
-
     await router.push({ name: 'home' })
   } catch (error: unknown) {
-    errorMessage.value = error instanceof Error ? error.message : error
+    errorMessage.value = error instanceof Error ? error.message : String(error)
   } finally {
     isLoading.value = false
   }

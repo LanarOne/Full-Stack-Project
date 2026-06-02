@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import PageForm from '@/components/PageForm.vue'
-import { useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { computed, ref } from 'vue'
 import { FwbInput, FwbSelect, FwbButton } from 'flowbite-vue'
 import { type UserStore, useUserStore } from '@/stores/user.ts'
 import { trpc } from '@/trpc.ts'
-import { type HouseholdStore, useHouseholdStore } from '@/stores/household.ts'
 import { parseYMD } from '@/helpers/dates.ts'
 
 const router = useRouter()
+const route = useRoute()
 
 const userStore: UserStore = useUserStore()
-const householdStore: HouseholdStore = useHouseholdStore()
+
+const householdId = computed(() => Number(route.params.id))
 
 type NewIngredientForm = {
   name: string
@@ -66,6 +67,7 @@ async function handleSubmit() {
     }
 
     await trpc.ingredient.create.mutate({
+      householdId: householdId.value,
       name: ingredientForm.value.name,
       type: ingredientForm.value.type,
       quantity: ingredientForm.value.quantity,
@@ -78,7 +80,7 @@ async function handleSubmit() {
       note: ingredientForm.value.note,
     })
 
-    await router.push(`/household/${householdStore.currentHHId}`)
+    await router.push(`/household/${householdId.value}`)
   } catch (error) {
     userStore.setError(error instanceof Error ? error.message : 'Creation failed')
   } finally {
@@ -110,7 +112,15 @@ async function handleSubmit() {
       name="quantity"
       required
     />
-    <fwb-select id="unit" name="unit" v-model="ingredientForm.unit" :options="units" label="Select a unit" required data-testid="unitSelect" />
+    <fwb-select
+      id="unit"
+      name="unit"
+      v-model="ingredientForm.unit"
+      :options="units"
+      label="Select a unit"
+      required
+      data-testid="unitSelect"
+    />
     <fwb-input
       v-model="ingredientForm.purchaseDate"
       label="Ingredient purchaseDate"

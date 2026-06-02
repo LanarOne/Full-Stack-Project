@@ -25,5 +25,8 @@
     "@tailwindcss/vite": "^4.2.1",
     "pino-http": "^11.0.0",
     "tailwindcss": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.10"
   }
 }

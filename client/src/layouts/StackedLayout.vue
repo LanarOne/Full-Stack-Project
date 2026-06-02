@@ -33,7 +33,7 @@ const nav = computed(() =>
 )
 
 function dismissNotif() {
-  userStore.clearError()
+  userStore.setError(null)
   householdStore.clearError()
 }
 </script>
@@ -43,7 +43,7 @@ function dismissNotif() {
     <template #logo>
       <fwb-navbar-logo> </fwb-navbar-logo>
       <h1 v-if="userStore.isLogged && userStore.user" class="text-white">
-        {{ userStore.user.name }}
+        {{ userStore.user?.name }}
       </h1>
     </template>
     <template #default="{ isShowMenu }">

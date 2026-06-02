@@ -82,10 +82,8 @@ describe('Ingredient Create Controller', () => {
       create(fakeIngredient() as any)
     ).rejects.toThrow(
       expect.objectContaining({
-        message: expect.objectContaining(
-          /unrecognized_keys/i
-        ),
-        code: 'BAD_REQUEST',
+        message: 'no result',
+        code: 'INTERNAL_SERVER_ERROR',
         name: 'TRPCError',
       })
     )

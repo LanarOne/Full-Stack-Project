@@ -3,7 +3,7 @@ import { createTestDatabase } from '@server/tests/utils/testDatabase.js'
 import { createCallerFactory } from '@server/trpc/index.js'
 import { insertAll } from '@server/tests/utils/records.js'
 import { fakeUser } from '@server/entities/test/fakes.js'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import userRouter from '../index.js'
 
 const db = await wrapInRollbacks(
@@ -22,18 +22,38 @@ const [user] = await insertAll(db, 'user', [
       '$2a$06$ReHvIIJwIalqXdvaw2mewultQU0ejWkoG4paCpYVBo5qLIAPbj//i',
   }),
 ])
-
-const { login } = createCaller({ db } as any)
+const cookie = vi.fn()
+const { login } = createCaller({
+  db,
+  res: { cookie },
+} as any)
 
 describe('User Login Controller', () => {
-  it('should return a token if the password matches', async () => {
-    const { token } = await login({
+  it('should return a user object and a cookie if the password matches', async () => {
+    const result = await login({
       email: user.email,
       password: PASSWORD_CORRECT,
     })
 
-    expect(token).toEqual(expect.any(String))
-    expect(token.slice(0, 3)).toEqual('eyJ')
+    expect(result).toEqual(
+      expect.objectContaining({
+        user: expect.objectContaining({
+          id: user.id,
+          email: user.email,
+        }),
+      })
+    )
+
+    expect(result).not.toHaveProperty('token')
+    expect(cookie).toHaveBeenCalledWith(
+      '__Host-auth_token',
+      expect.any(String),
+      expect.objectContaining({
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+      })
+    )
   })
 
   it('should throw an error for non-existant user', async () => {

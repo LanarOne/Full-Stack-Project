@@ -92,8 +92,7 @@ describe('Member Get By Household Controller', () => {
       getByHouseholdId()
     ).rejects.toThrow(
       expect.objectContaining({
-        message:
-          "You're not part of this household",
+        message: 'Missing householdId',
         code: 'BAD_REQUEST',
         name: 'TRPCError',
       })

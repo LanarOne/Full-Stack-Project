@@ -9,8 +9,8 @@ import { useUserStore } from '@/stores/user.ts'
 import AddIngredientView from '@/views/AddIngredientView.vue'
 import AddRecipeView from '@/views/AddRecipeView.vue'
 import { useHouseholdStore } from '@/stores/household.ts'
-import StorageView from "@/views/StorageView.vue";
-import AddMemberView from "@/views/AddMemberView.vue";
+import StorageView from '@/views/StorageView.vue'
+import AddMemberView from '@/views/AddMemberView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -57,13 +57,13 @@ const router = createRouter({
         {
           path: 'household/:id/storage',
           name: 'storage',
-          component: StorageView
+          component: StorageView,
         },
         {
           path: 'household/:id/add-member',
           name: 'add-member',
-          component: AddMemberView
-        }
+          component: AddMemberView,
+        },
       ],
     },
   ],
@@ -77,12 +77,12 @@ router.beforeEach(async (to) => {
     await userStore.fetchUser()
   }
 
-  if (!householdStore.households || householdStore.households.length === 0) {
-    await householdStore.fetchHousehold()
-  }
-
   if (!userStore.isLogged && to.name !== 'login' && to.name !== 'signup') {
     return { name: 'login' }
+  }
+
+  if (userStore.isLogged && !householdStore.households.length) {
+    await householdStore.fetchHousehold()
   }
 
   if (userStore.isLogged && (to.name === 'login' || to.name === 'signup')) {

@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user.ts'
-import { useHouseholdStore } from '@/stores/household.ts'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { trpc } from '@/trpc.ts'
 import PageForm from '@/components/PageForm.vue'
 import { FwbInput, FwbTextarea, FwbToggle, FwbButton } from 'flowbite-vue'
 
 const router = useRouter()
+const route = useRoute()
 
 const userStore = useUserStore()
-const householdStore = useHouseholdStore()
+
+const householdId = computed(() => Number(route.params.id))
 
 const recipeForm = ref({
   name: '',
@@ -26,9 +27,13 @@ const recipeForm = ref({
 async function handleSubmit() {
   userStore.isLoading = true
   try {
-    await trpc.recipe.create.mutate(recipeForm.value)
+    if (!Number.isInteger(householdId.value) || householdId.value <= 0) {
+      userStore.setError('Invalid household id')
+      return
+    }
+    await trpc.recipe.create.mutate({ householdId: householdId.value, ...recipeForm.value })
 
-    await router.push({ name: 'Household', params: { id: householdStore.currentHHId } })
+    await router.push({ name: 'Household', params: { id: householdId.value } })
   } catch (error) {
     userStore.setError(error instanceof Error ? error.message : 'Creation failed')
   } finally {

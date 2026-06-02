@@ -2,7 +2,7 @@ import config from '@server/config.js'
 import { publicProcedure } from '@server/trpc/index.js'
 import { TRPCError } from '@trpc/server'
 import { getUserFromToken } from '@server/helpers/tokenHelpers.js'
-import logger from "@server/logger.js";
+import logger from '@server/logger.js'
 
 export const authedProcedure =
   publicProcedure.use(({ ctx, next }) => {
@@ -27,9 +27,11 @@ export const authedProcedure =
       })
     }
 
-    const token = ctx.req
-      .header('Authorization')
-      ?.replace('Bearer ', '')
+    const token =
+      ctx.req.cookies?.[config.auth.cookieName] ??
+      ctx.req
+        .header('Authorization')
+        ?.replace('Bearer ', '')
 
     if (!token) {
       throw new TRPCError({
@@ -41,7 +43,10 @@ export const authedProcedure =
     const authUser = getUserFromToken(token)
 
     if (!authUser) {
-        logger.warn({url:ctx.req?.url }, 'Invalid token')
+      logger.warn(
+        { url: ctx.req?.url },
+        'Invalid token'
+      )
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: 'Invalid token.',

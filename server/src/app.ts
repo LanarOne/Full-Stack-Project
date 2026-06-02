@@ -4,6 +4,7 @@ import type { CreateExpressContextOptions } from '@trpc/server/adapters/express'
 import cors from 'cors'
 import { renderTrpcPanel } from 'trpc-panel'
 import logger from '@server/logger.js'
+import cookieParser from 'cookie-parser'
 import config from './config.js'
 import type { Context } from './trpc/index.js'
 import { appRouter } from './controllers/index.js'
@@ -12,7 +13,13 @@ import type { Database } from './database/index.js'
 export default function createApp(db: Database) {
   const app = express()
 
-  app.use(cors())
+  app.use(
+    cors({
+      origin: 'http://localhost:5173',
+      credentials: true,
+    })
+  )
+  app.use(cookieParser())
   app.use(express.json())
 
   app.use('/api/health', (_, res) => {
@@ -21,7 +28,7 @@ export default function createApp(db: Database) {
   })
 
   app.use(
-    '/api/v1/trpc',
+    config.endpoint,
     createExpressMiddleware({
       createContext: ({
         req,
@@ -60,14 +67,17 @@ export default function createApp(db: Database) {
   )
 
   if (config.env === 'development') {
-    app.use('/api/v1/trcp-panel', (_, res) => {
-      res.send(
-        renderTrpcPanel(appRouter, {
-          url: `http://localhost:${config.port}/api/v1/trpc`,
-          transformer: 'superjson',
-        })
-      )
-    })
+    app.use(
+      `${config.endpoint}-panel`,
+      (_, res) => {
+        res.send(
+          renderTrpcPanel(appRouter, {
+            url: `http://localhost:${config.port}${config.endpoint}`,
+            transformer: 'superjson',
+          })
+        )
+      }
+    )
   }
   return app
 }
