@@ -96,9 +96,7 @@ describe('Recipe Update Controller', () => {
       })
     ).rejects.toThrow(
       expect.objectContaining({
-        message: expect.objectContaining(
-          /unrecognized_keys/i
-        ),
+        message: 'No household context available',
         code: 'BAD_REQUEST',
         name: 'TRPCError',
       })
@@ -136,7 +134,7 @@ describe('Recipe Update Controller', () => {
       expect.objectContaining({
         message:
           "You're not part of this household",
-        code: 'BAD_REQUEST',
+        code: 'UNAUTHORIZED',
         name: 'TRPCError',
       })
     )
@@ -167,7 +165,7 @@ describe('Recipe Update Controller', () => {
       expect.objectContaining({
         message:
           "You're not part of this household",
-        code: 'BAD_REQUEST',
+        code: 'UNAUTHORIZED',
         name: 'TRPCError',
       })
     )

@@ -73,7 +73,7 @@ describe('Household Update Controller', () => {
       })
     ).rejects.toThrow(
       expect.objectContaining({
-        message: 'Missing householdId',
+        message: 'No household context available',
         code: 'BAD_REQUEST',
         name: 'TRPCError',
       })
@@ -99,7 +99,7 @@ describe('Household Update Controller', () => {
       expect.objectContaining({
         message:
           "You're not part of this household",
-        code: 'BAD_REQUEST',
+        code: 'UNAUTHORIZED',
         name: 'TRPCError',
       })
     )
@@ -129,7 +129,7 @@ describe('Household Update Controller', () => {
       expect.objectContaining({
         message:
           "You're not part of this household",
-        code: 'BAD_REQUEST',
+        code: 'UNAUTHORIZED',
         name: 'TRPCError',
       })
     )

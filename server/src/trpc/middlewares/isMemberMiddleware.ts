@@ -7,6 +7,18 @@ export const enforceIsMember = middleware(
     ctx: { authUser, authHousehold, repos },
     next,
   }) => {
+    if (!authUser) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'Please log in',
+      })
+    }
+    if (!authHousehold) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'No household context available',
+      })
+    }
     const isInHousehold = await isMember({
       userId: authUser!.id,
       householdId: authHousehold!.id,
@@ -15,7 +27,7 @@ export const enforceIsMember = middleware(
 
     if (!isInHousehold) {
       throw new TRPCError({
-        code: 'BAD_REQUEST',
+        code: 'UNAUTHORIZED',
         message:
           "You're not part of this household",
       })

@@ -113,6 +113,7 @@ describe('Authenticated Household Procedure', () => {
       caller.testCall({} as any)
     ).rejects.toThrow(
       expect.objectContaining({
+        message: 'No household context available',
         code: 'BAD_REQUEST',
         name: 'TRPCError',
       })

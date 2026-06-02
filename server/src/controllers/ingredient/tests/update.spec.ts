@@ -141,7 +141,7 @@ describe('Ingredient Update Controller', () => {
       expect.objectContaining({
         message:
           "You're not part of this household",
-        code: 'BAD_REQUEST',
+        code: 'UNAUTHORIZED',
         name: 'TRPCError',
       })
     )
@@ -178,7 +178,7 @@ describe('Ingredient Update Controller', () => {
       expect.objectContaining({
         message:
           "You're not part of this household",
-        code: 'BAD_REQUEST',
+        code: 'UNAUTHORIZED',
         name: 'TRPCError',
       })
     )

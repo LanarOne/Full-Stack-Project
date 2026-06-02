@@ -139,7 +139,7 @@ describe('Ingredient Low Stock Controller', () => {
       expect.objectContaining({
         message:
           "You're not part of this household",
-        code: 'BAD_REQUEST',
+        code: 'UNAUTHORIZED',
         name: 'TRPCError',
       })
     )
@@ -159,7 +159,7 @@ describe('Ingredient Low Stock Controller', () => {
 
     await expect(getLowStock()).rejects.toThrow(
       expect.objectContaining({
-        code: 'BAD_REQUEST',
+        code: 'UNAUTHORIZED',
         name: 'TRPCError',
         message:
           "You're not part of this household",

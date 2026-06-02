@@ -65,7 +65,7 @@ await insertAll(db, 'meal', [
   }),
 ])
 
-describe('Meal GetById Controller', () => {
+describe('Meal GetByRecipeId Controller', () => {
   it('should throw if the user is not logged in', async () => {
     const { getByRecipeId } = createCaller(
       requestContext({ db })
@@ -136,7 +136,7 @@ describe('Meal GetById Controller', () => {
       expect.objectContaining({
         message:
           "You're not part of this household",
-        code: 'BAD_REQUEST',
+        code: 'UNAUTHORIZED',
         name: 'TRPCError',
       })
     )
@@ -202,7 +202,7 @@ describe('Meal GetById Controller', () => {
       expect.objectContaining({
         message:
           "You're not part of this household",
-        code: 'BAD_REQUEST',
+        code: 'UNAUTHORIZED',
         name: 'TRPCError',
       })
     )

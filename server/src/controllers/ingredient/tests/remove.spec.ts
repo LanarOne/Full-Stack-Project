@@ -51,7 +51,7 @@ const [ingredient] = await insertAll(
   ]
 )
 
-describe('Ingredient Get By Passed Expiry Date Controller', () => {
+describe('Ingredient Delete Controller', () => {
   it('should throw if the user is not logged in', async () => {
     const { remove } = createCaller(
       requestContext({ db })
@@ -122,7 +122,7 @@ describe('Ingredient Get By Passed Expiry Date Controller', () => {
       expect.objectContaining({
         message:
           "You're not part of this household",
-        code: 'BAD_REQUEST',
+        code: 'UNAUTHORIZED',
         name: 'TRPCError',
       })
     )
@@ -144,7 +144,7 @@ describe('Ingredient Get By Passed Expiry Date Controller', () => {
       remove({ id: ingredient.id })
     ).rejects.toThrow(
       expect.objectContaining({
-        code: 'BAD_REQUEST',
+        code: 'UNAUTHORIZED',
         name: 'TRPCError',
         message:
           "You're not part of this household",

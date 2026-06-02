@@ -145,7 +145,7 @@ await insertAll(db, 'rcpIngr', [
   }),
 ])
 
-describe('Recipe-Ingredient Get By Recipe ID Controller', () => {
+describe('Recipe-Ingredient Get By Ingredients Controller', () => {
   it('should throw if the user is not logged in', async () => {
     const { getByIngredients } = createCaller(
       requestContext({ db })
@@ -191,9 +191,7 @@ describe('Recipe-Ingredient Get By Recipe ID Controller', () => {
       ])
     ).rejects.toThrow(
       expect.objectContaining({
-        message: expect.objectContaining(
-          /unrecognized_keys/i
-        ),
+        message: 'No household context available',
         code: 'BAD_REQUEST',
         name: 'TRPCError',
       })
@@ -228,7 +226,7 @@ describe('Recipe-Ingredient Get By Recipe ID Controller', () => {
       expect.objectContaining({
         message:
           "You're not part of this household",
-        code: 'BAD_REQUEST',
+        code: 'UNAUTHORIZED',
         name: 'TRPCError',
       })
     )
@@ -256,7 +254,7 @@ describe('Recipe-Ingredient Get By Recipe ID Controller', () => {
       expect.objectContaining({
         message:
           "You're not part of this household",
-        code: 'BAD_REQUEST',
+        code: 'UNAUTHORIZED',
         name: 'TRPCError',
       })
     )

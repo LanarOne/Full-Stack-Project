@@ -139,7 +139,7 @@ describe('Ingredient Get By Storage Controller', () => {
       expect.objectContaining({
         message:
           "You're not part of this household",
-        code: 'BAD_REQUEST',
+        code: 'UNAUTHORIZED',
         name: 'TRPCError',
       })
     )
@@ -161,7 +161,7 @@ describe('Ingredient Get By Storage Controller', () => {
       getByStorage({ storage: 'dry storage' })
     ).rejects.toThrow(
       expect.objectContaining({
-        code: 'BAD_REQUEST',
+        code: 'UNAUTHORIZED',
         name: 'TRPCError',
         message:
           "You're not part of this household",

@@ -15,7 +15,6 @@ export default authedHouseholdProcedure
     memberSchema
       .pick({
         userId: true,
-        householdId: true,
       })
       .strict()
   )

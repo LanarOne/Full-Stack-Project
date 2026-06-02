@@ -82,7 +82,7 @@ describe('Member Delete Controller', () => {
       })
     ).rejects.toThrow(
       expect.objectContaining({
-        message: 'Missing householdId',
+        message: 'No household context available',
         code: 'BAD_REQUEST',
         name: 'TRPCError',
       })

@@ -105,9 +105,7 @@ describe('Ingredient Get By Household Controller', () => {
       getByHouseholdId()
     ).rejects.toThrow(
       expect.objectContaining({
-        message: expect.objectContaining(
-          /unrecognized_keys/i
-        ),
+        message: 'No household context available',
         code: 'BAD_REQUEST',
         name: 'TRPCError',
       })
@@ -129,7 +127,7 @@ describe('Ingredient Get By Household Controller', () => {
       getByHouseholdId()
     ).rejects.toThrow(
       expect.objectContaining({
-        code: 'BAD_REQUEST',
+        code: 'UNAUTHORIZED',
         name: 'TRPCError',
         message:
           "You're not part of this household",

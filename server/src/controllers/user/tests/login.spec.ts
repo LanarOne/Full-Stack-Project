@@ -46,7 +46,7 @@ describe('User Login Controller', () => {
 
     expect(result).not.toHaveProperty('token')
     expect(cookie).toHaveBeenCalledWith(
-      '__Host-auth_token',
+      'auth_token',
       expect.any(String),
       expect.objectContaining({
         httpOnly: true,

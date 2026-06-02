@@ -72,6 +72,12 @@ describe('Creates a new recipeIngredient', () => {
         amount: 2,
         unit: 'kilo',
       })
+    ).rejects.toThrow(
+      expect.objectContaining({
+        message: expect.stringContaining(
+          'violates check constraint'
+        ),
+      })
     )
   })
 
