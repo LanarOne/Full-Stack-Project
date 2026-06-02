@@ -25,9 +25,9 @@ async function deleteMember(userId: number) {
   householdStore.isLoading = true
   try {
     const householdId = Number(route.params.id)
-    await trpc.member.remove.mutate({ userId, householdId })
+    await trpc.member.remove.mutate({ userId, householdId } as never)
 
-    const response = await trpc.member.getByHouseholdId.query({ householdId })
+    const response = await trpc.member.getByHouseholdId.query({ householdId } as never)
 
     const memberIds = [...new Set(response.map((member) => member.userId))]
     members.value = await Promise.all(
@@ -52,8 +52,8 @@ onMounted(async () => {
     await householdStore.getCurrent()
 
     const [memberResponse, recipeResponse] = await Promise.all([
-      trpc.member.getByHouseholdId.query({ householdId: id }),
-      trpc.recipe.getByHouseholdId.query({ householdId: id }),
+      trpc.member.getByHouseholdId.query({ householdId: id } as never),
+      trpc.recipe.getByHouseholdId.query({ householdId: id } as never),
     ])
 
     recipes.value = recipeResponse

@@ -45,7 +45,7 @@ async function loadStorage() {
 
     ingredients.value = await trpc.ingredient.getByHouseholdId.query({
       householdId: householdId.value,
-    })
+    } as never)
   } catch (error) {
     userStore.setError(error instanceof Error ? error.message : 'Something went wrong')
   } finally {

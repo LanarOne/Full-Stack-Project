@@ -31,7 +31,10 @@ async function handleSubmit() {
       userStore.setError('Invalid household id')
       return
     }
-    await trpc.recipe.create.mutate({ householdId: householdId.value, ...recipeForm.value })
+    await trpc.recipe.create.mutate({
+      householdId: householdId.value,
+      ...recipeForm.value,
+    } as never)
 
     await router.push({ name: 'Household', params: { id: householdId.value } })
   } catch (error) {

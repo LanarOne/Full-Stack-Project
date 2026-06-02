@@ -13,7 +13,7 @@ const userForm = ref({
   name: '',
   diet: '',
   allergies: '',
-  profilePicture: null,
+  profilePicture: undefined,
 })
 
 const succeeded = ref(false)
@@ -22,9 +22,9 @@ const isLoading = ref(false)
 
 async function handleSubmit() {
   isLoading.value = true
-  if (!userForm.value.profilePicture) {
-    userForm.value.profilePicture = 'http://placeholderimage.com'
-  }
+  // if (!userForm.value.profilePicture) {
+  //   userForm.value.profilePicture = 'https://placeholderimage.com' as never
+  // }
   try {
     await trpc.user.signup.mutate(userForm.value)
 

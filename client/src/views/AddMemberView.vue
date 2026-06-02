@@ -28,7 +28,7 @@ async function handleSubmit() {
   householdStore.isLoading = true
   try {
     const user = await trpc.user.getByEmail.query({ email: userEmail.value })
-    await trpc.member.create.mutate({ userId: user.id, householdId: householdId.value })
+    await trpc.member.create.mutate({ userId: user.id, householdId: householdId.value } as never)
     await router.push(`/household/${householdId.value}`)
   } catch (error) {
     userStore.setError(error instanceof Error ? error.message : 'Invite failed')

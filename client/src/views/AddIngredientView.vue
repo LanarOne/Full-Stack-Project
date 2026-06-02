@@ -78,7 +78,7 @@ async function handleSubmit() {
       notifInterval: ingredientForm.value.notifInterval,
       isReady: ingredientForm.value.isReady,
       note: ingredientForm.value.note,
-    })
+    } as never)
 
     await router.push(`/household/${householdId.value}`)
   } catch (error) {
