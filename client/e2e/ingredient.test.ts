@@ -1,6 +1,6 @@
 import { fakeHousehold, fakeIngredient, fakeUser } from './utils/fakes.js'
 import { expect, test } from '@playwright/test'
-import { asUser, createHousehold, trpc } from './utils/api.js'
+import { asUser, createHousehold } from './utils/api.js'
 
 const user = fakeUser()
 const household = fakeHousehold()

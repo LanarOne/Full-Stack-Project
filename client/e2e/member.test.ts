@@ -1,6 +1,6 @@
 import { fakeHousehold, fakeUser } from './utils/fakes.js'
 import { expect, test } from '@playwright/test'
-import { asUser, createHousehold, createUser, signupNewUser, trpc } from './utils/api.js'
+import { asUser, createHousehold, createUser } from './utils/api.js'
 
 const user = fakeUser()
 const guestUser = fakeUser({ name: 'NTM' })
