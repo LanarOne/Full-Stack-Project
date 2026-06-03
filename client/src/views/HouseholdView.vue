@@ -84,7 +84,7 @@ onMounted(async () => {
     <aside class="w-64 shrink-0">
       <div>
         <h2>Members</h2>
-        <ul>
+        <ul data-testid="memberslist">
           <li v-for="member in members" class="flex items-center" :key="member.name + member.id">
             <h3>{{ member.name }}</h3>
             <fwb-button

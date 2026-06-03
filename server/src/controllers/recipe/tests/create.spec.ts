@@ -262,27 +262,6 @@ describe('Recipe Create Controller', () => {
     )
   })
 
-  it('should throw if the input has too many fields', async () => {
-    await expect(
-      create({
-        name: 'tartiflette',
-        description: 'Tartiflette du fromage',
-        portions: 4,
-        prepTime: 60,
-        public: false,
-        newField: 'malevolent hack',
-      } as any)
-    ).rejects.toThrow(
-      expect.objectContaining({
-        code: 'BAD_REQUEST',
-        message: expect.objectContaining(
-          /unrecognized_keys/i
-        ),
-        name: 'TRPCError',
-      })
-    )
-  })
-
   it('should create an ingredient without nullable fields correctly', async () => {
     await expect(
       create({

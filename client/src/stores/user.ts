@@ -38,10 +38,20 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  function logOut() {
-    user.value = null
-    error.value = null
-    isLoading.value = false
+  async function logOut() {
+    isLoading.value = true
+    setError(null)
+
+    try {
+      await trpc.user.logout.mutate()
+
+      user.value = null
+      isBootstrapped.value = true
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Logout failed')
+    } finally {
+      isLoading.value = false
+    }
   }
 
   function updateUser(partialUser: Partial<UserPublic>) {

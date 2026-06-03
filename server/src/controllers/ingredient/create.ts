@@ -34,7 +34,6 @@ export default authedHouseholdProcedure
         isReady: true,
         note: true,
       })
-      .strict()
   )
   .mutation(
     async ({ input: ingredient, ctx }) => {

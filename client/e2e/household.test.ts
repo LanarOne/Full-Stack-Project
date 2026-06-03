@@ -1,79 +1,59 @@
 import { fakeHousehold, fakeUser } from './utils/fakes.js'
 import { expect, test } from '@playwright/test'
-import { asUser, trpc } from './utils/api.js'
+import { asUser, createHousehold } from './utils/api.js'
 
 const user = fakeUser()
+const household = fakeHousehold()
 
 test.describe.serial('create a household and navigate to its page', () => {
   test('Logged user can create a household', async ({ page }) => {
-    const household = await asUser(page, user, () => trpc.household.create.mutate(fakeHousehold()))
     await asUser(page, user, async () => {
-      await page.goto('/')
-
-      const navCollapse = page.getByTestId('navCollapse')
-      const createBtn = page.getByText('Create household')
-      const successMessage = page.getByTestId('successMessage')
-
-      expect(navCollapse).toBeDefined()
-      expect(createBtn).toBeDefined()
-      await expect(successMessage).toBeHidden()
-
-      await navCollapse.click()
-      await createBtn.click()
-
-      await page.waitForURL('/household/create')
+      await page.goto(`/household/create`)
 
       const form = page.getByLabel('New Household')
+      const successMessage = page.getByTestId('successMessage')
+
       await expect(form).toBeVisible()
+      await expect(successMessage).toBeHidden()
 
       await page.getByTestId('householdName').fill(household.name)
       await form.locator('button[type="submit"]').click()
+
       await expect(successMessage).toBeVisible()
     })
   })
 
   test('Logged member can access the household url', async ({ page }) => {
-    const household = await asUser(page, user, () => trpc.household.create.mutate(fakeHousehold()))
     await asUser(page, user, async () => {
-      await page.goto('/')
+      await createHousehold(page, household.name)
+      await expect(page).toHaveURL(/\/household\/\d+$/)
 
-      const navCollapse = page.getByTestId('navCollapse')
-      const householdBtn = page.locator(`[href*="/household/${household.id}"]`)
-
-      expect(navCollapse).toBeDefined()
-      expect(householdBtn).toBeDefined()
-
-      await navCollapse.click()
-      await householdBtn.click()
+      const householdUrl = page.url()
+      const householdId = Number(householdUrl.split('/').pop())
 
       const heading = page.getByTestId('householdHeading')
       const failedHeading = page.getByTestId('failedHeading')
 
-      expect(heading).toBeDefined()
+      await expect(heading).toBeVisible()
+
       await expect(failedHeading).toBeHidden()
-      await expect(page).toHaveURL(`/household/${household.id}`)
-      await expect(heading).toHaveText(/'s Household ! /i)
+      await expect(page).toHaveURL(`/household/${householdId}`)
+      await expect(heading).toHaveText(`${household.name}'s Household !`)
     })
   })
 
   test('Logged member can create a recipe and see it in the main household page', async ({
     page,
   }) => {
-    const household = await asUser(page, user, () => trpc.household.create.mutate(fakeHousehold()))
     await asUser(page, user, async () => {
-      await page.goto('/')
+      await createHousehold(page, household.name)
 
-      const navCollapse = page.getByTestId('navCollapse')
-      const householdBtn = page.locator(`[href*="/household/${household.id}"]`)
+      await expect(page).toHaveURL(/\/household\/\d+$/)
 
-      expect(navCollapse).toBeDefined()
-      expect(householdBtn).toBeDefined()
-
-      await navCollapse.click()
-      await householdBtn.click()
+      const householdUrl = page.url()
+      const householdId = Number(householdUrl.split('/').pop())
 
       const addRecipeBtn = page.getByText('Add Recipe')
-
       await addRecipeBtn.click()
 
       await expect(page).toHaveURL(/create-recipe/i)
@@ -87,13 +67,13 @@ test.describe.serial('create a household and navigate to its page', () => {
       await page.getByLabel('Tips').fill('Some recipes tips')
       await page.getByLabel('Portions').fill('20')
       await page.getByLabel('Preparation Time').fill('80')
-      await page.getByRole('link', { name: 'Create household' }).click()
+      await page.getByTestId('createRecipeBtn').click()
 
-      await expect(page).toHaveURL(/household/i)
+      await expect(page).toHaveURL(`/household/${householdId}`)
 
       const newRecipe = page.getByText('Some recipes name') // ALWAYS PASSING
 
-      expect(newRecipe).toBeDefined()
+      await expect(newRecipe).toBeVisible()
     })
   })
 })

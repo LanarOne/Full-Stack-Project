@@ -74,7 +74,13 @@ async function submitLogin() {
         >
 
         <div class="flex justify-center">
-          <fwb-button gradient="purple-pink" outline type="submit" :disabled="isLoading">
+          <fwb-button
+            gradient="purple-pink"
+            outline
+            type="submit"
+            :disabled="isLoading"
+            name="login"
+          >
             {{ isLoading ? 'Loading...' : 'Login' }}
           </fwb-button>
         </div>

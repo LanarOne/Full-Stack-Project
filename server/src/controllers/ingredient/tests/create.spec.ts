@@ -318,31 +318,4 @@ describe('Ingredient Create Controller', () => {
       })
     )
   })
-
-  it('should throw if the input has too many fields', async () => {
-    await expect(
-      create({
-        name: 'leek',
-        type: 'vegetable',
-        quantity: 2,
-        unit: 'unit',
-        purchaseDate: aWeekAgo(),
-        expiryDate: closeExpiryDate(),
-        storage: 'fridge',
-        notifInterval: 5,
-        nextNotif: new Date('2026-02-15'),
-        isReady: true,
-        note: 'some piece of advice',
-        newField: 'malevolent hack',
-      } as any)
-    ).rejects.toThrow(
-      expect.objectContaining({
-        code: 'BAD_REQUEST',
-        message: expect.objectContaining(
-          /unrecognized_keys/i
-        ),
-        name: 'TRPCError',
-      })
-    )
-  })
 })

@@ -22,11 +22,11 @@ async function handleSubmit() {
     householdForm.value.profilePicture = 'https://placeholderpic.com'
   }
   try {
-    await trpc.household.create.mutate(householdForm.value)
+    const newHousehold = await trpc.household.create.mutate(householdForm.value)
 
     succeeded.value = true
     setTimeout(async () => {
-      await router.push({ name: 'home' })
+      await router.push(`/household/${newHousehold.id}`)
     }, 2500)
   } catch (e) {
     userStore.setError(e instanceof Error ? e.message : String(e))

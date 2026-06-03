@@ -1,46 +1,61 @@
-import { createTRPCProxyClient, httpBatchLink } from '@trpc/client'
+import { createTRPCProxyClient, httpBatchLink, TRPCClientError } from '@trpc/client'
 import { AppRouter } from '@server/controllers/index.js'
 import SuperJSON from 'superjson'
 import { apiOrigin, apiPath } from './config.js'
-import { Page } from '@playwright/test'
+import { expect, Page } from '@playwright/test'
 import { fakeUser } from './fakes.js'
-
-let accessToken: string | null = null
 
 export const trpc = createTRPCProxyClient<AppRouter>({
   links: [
     httpBatchLink({
       transformer: SuperJSON,
       url: `${apiOrigin}${apiPath}`,
-
-      headers: () => {
-        return accessToken ? { Authorization: `Bearer ${accessToken}` } : {}
+      fetch(url, options) {
+        return fetch(url, {
+          ...options,
+          credentials: 'include',
+        })
       },
     }),
   ],
 })
 
 type UserLogin = Parameters<typeof trpc.user.signup.mutate>[0]
-type UserLoginAuthed = UserLogin & { id: number; token: string }
+type UserLoginAuthed = UserLogin & { id: number }
+
+export async function createUser(userLogin: UserLogin = fakeUser()): Promise<UserLoginAuthed> {
+  try {
+    const signupResponse = await trpc.user.signup.mutate(userLogin)
+    return { ...userLogin, id: signupResponse.id }
+  } catch (error: unknown) {
+    if (!(error instanceof TRPCClientError) || error?.data?.code !== 'BAD_REQUEST') throw error
+    return { ...userLogin, id: -1 }
+  }
+}
 
 export async function signupNewUser(
   page: Page,
   userLogin: UserLogin = fakeUser(),
 ): Promise<UserLoginAuthed> {
+  let userId: number
   try {
-    await trpc.user.signup.mutate(userLogin)
-  } catch (error) {
-    if (error?.data?.code !== 'BAD_REQUEST') throw error
+    const signupResponse = await trpc.user.signup.mutate(userLogin)
+    userId = signupResponse.id
+  } catch (error: unknown) {
+    if (!(error instanceof TRPCClientError) || error?.data?.code !== 'BAD_REQUEST') throw error
+
+    userId = -1
   }
 
-  const loginResponse = await trpc.user.login.mutate(userLogin)
-  const userId = JSON.parse(atob(loginResponse.token.split('.')[1])).user.id
+  await page.goto('/login')
+  await expect(page).toHaveURL(`/login`)
+  await page.getByLabel('Email').fill(userLogin.email)
+  await page.getByLabel('Password').fill(userLogin.password)
+  await page.getByRole('button', { name: 'Login' }).click()
 
-  return {
-    ...userLogin,
-    id: userId,
-    token: loginResponse.token,
-  }
+  await page.waitForURL('/')
+
+  return { ...userLogin, id: userId }
 }
 
 export async function asUser<T>(
@@ -50,26 +65,21 @@ export async function asUser<T>(
 ): Promise<T> {
   const user = await signupNewUser(page, userLogin)
 
-  accessToken = user.token
-
   if (page.url() === 'about:blank') {
     await page.goto('/')
     await page.waitForURL('/login')
   }
 
-  await page.evaluate(
-    ({ accessToken }) => {
-      localStorage.setItem('token', String(accessToken))
-    },
-    { accessToken },
-  )
-
   const callbackResult = await callback(user)
 
-  await page.evaluate(() => {
-    localStorage.removeItem('token')
-  })
-  accessToken = null
+  await page.goto('/')
 
   return callbackResult
+}
+
+export async function createHousehold(page: Page, householdName: string) {
+  await page.goto('/household/create')
+
+  await page.getByTestId('householdName').fill(householdName)
+  await page.getByTestId('createBtn').click()
 }

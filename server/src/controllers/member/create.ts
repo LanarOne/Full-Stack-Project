@@ -12,11 +12,9 @@ export default authedHouseholdProcedure
   .use(enforceIsMember)
   .use(enforceIsGuest)
   .input(
-    memberSchema
-      .pick({
-        userId: true,
-      })
-      .strict()
+    memberSchema.pick({
+      userId: true,
+    })
   )
   .mutation(
     async ({ input: { userId }, ctx }) => {

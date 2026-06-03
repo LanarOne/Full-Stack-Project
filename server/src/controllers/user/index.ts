@@ -5,6 +5,7 @@ import update from './update.js'
 import getById from './getById.js'
 import getByGivenId from './getByGivenId.js'
 import getByEmail from './getByEmail.js'
+import logout from './logout.js'
 
 export default router({
   signup,
@@ -13,4 +14,5 @@ export default router({
   getById,
   getByGivenId,
   getByEmail,
+  logout,
 })

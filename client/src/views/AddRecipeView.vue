@@ -79,9 +79,14 @@ async function handleSubmit() {
       required
     />
     <fwb-toggle v-model="recipeForm.public" label="Is this recipe Public?" name="public" />
-    <fwb-button class="mt-3" gradient="cyan-blue" type="submit" :disabled="userStore.isLoading">{{
-      userStore?.isLoading ? 'Loading' : 'Create'
-    }}</fwb-button>
+    <fwb-button
+      data-testid="createRecipeBtn"
+      class="mt-3"
+      gradient="cyan-blue"
+      type="submit"
+      :disabled="userStore.isLoading"
+      >{{ userStore?.isLoading ? 'Loading' : 'Create' }}</fwb-button
+    >
   </PageForm>
 </template>
 

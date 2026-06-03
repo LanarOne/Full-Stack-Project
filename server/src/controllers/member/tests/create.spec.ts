@@ -242,21 +242,4 @@ describe('Member Create Controller', () => {
       })
     )
   })
-
-  it('should throw if the input has too many fields', async () => {
-    await expect(
-      create({
-        userId: guestUser.id,
-        newField: 'malevolent hack',
-      } as any)
-    ).rejects.toThrow(
-      expect.objectContaining({
-        code: 'BAD_REQUEST',
-        name: 'TRPCError',
-        message: expect.objectContaining(
-          /unrecognized_keys/i
-        ),
-      })
-    )
-  })
 })

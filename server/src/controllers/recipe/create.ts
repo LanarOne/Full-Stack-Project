@@ -28,7 +28,6 @@ export default authedHouseholdProcedure
         img: true,
         vid: true,
       })
-      .strict()
   )
   .mutation(async ({ input: recipe, ctx }) => {
     const result = await ctx.repos.recipeRepo

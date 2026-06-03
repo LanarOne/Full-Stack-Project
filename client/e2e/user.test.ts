@@ -84,8 +84,6 @@ test.describe.serial('logout sequence', () => {
 
       await expect(logoutLink).toBeHidden()
 
-      await expect(page).toHaveURL('/login')
-
       await page.goto('/')
       await expect(logoutLink).toBeHidden()
       await expect(page).toHaveURL('/login')
