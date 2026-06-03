@@ -100,7 +100,7 @@ jobs:
         run: |
           echo "GITHUB_REF=$GITHUB_REF"
           echo "GITHUB_SHA=$GITHUB_SHA"
-          git log -1 --online
+          git log -1 --oneline
 
       - name: Build server image
         run: docker build -t server:${GITHUB_SHA} -f ./server/Dockerfile .
