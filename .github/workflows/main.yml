@@ -110,7 +110,7 @@ jobs:
 
       - name: Push server image
         run: |
-          aws lightsail push-container-image --region ${vars.AWS_REGION} --service-name ${{vars.AWS_LIGHTSAIL_SERVICE}} --label $SERVER_IMAGE_TAG --image server:${GITHUB_SHA} --output json | tee server-push.json
+          aws lightsail push-container-image --region ${{vars.AWS_REGION}} --service-name ${{vars.AWS_LIGHTSAIL_SERVICE}} --label $SERVER_IMAGE_TAG --image server:${GITHUB_SHA} --output json | tee server-push.json
 
       - name: Push client image
         run: |
