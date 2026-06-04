@@ -146,15 +146,24 @@ jobs:
             --region "$AWS_REGION" \
             --output json > registry-login.json
       
-          jq -r '.registryLogin.dockerLoginCommand' registry-login.json | bash
+          REGISTRY=$(jq -r '.registryLogin.registry' registry-login.json)
+          USERNAME=$(jq -r '.registryLogin.username' registry-login.json)
+          PASSWORD=$(jq -r '.registryLogin.password' registry-login.json)
+      
+          test -n "$REGISTRY" && test "$REGISTRY" != "null"
+          test -n "$USERNAME" && test "$USERNAME" != "null"
+          test -n "$PASSWORD" && test "$PASSWORD" != "null"
+      
+          echo "$PASSWORD" | docker login --username "$USERNAME" --password-stdin "$REGISTRY"
+      
+          echo "REGISTRY=$REGISTRY" >> "$GITHUB_ENV"
           echo "---- registry-login.json ----"
           cat registry-login.json
 
       - name: Push server image to Lightsail registry
         run: |
           set -euo pipefail
-          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-          SERVER_REMOTE="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/lightsail-container-services/${{ vars.AWS_LIGHTSAIL_SERVICE }}:server-${GITHUB_SHA}"
+          SERVER_REMOTE="$REGISTRY/${{ vars.AWS_LIGHTSAIL_SERVICE }}:server-${GITHUB_SHA}"
           
           docker tag "server:${GITHUB_SHA}" "$SERVER_REMOTE"
           docker push "$SERVER_REMOTE"
@@ -178,8 +187,7 @@ jobs:
       - name: Push client image to Lightsail registry
         run: |
           set -euo pipefail
-          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-          CLIENT_REMOTE="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/lightsail-container-services/${{ vars.AWS_LIGHTSAIL_SERVICE }}:client-${GITHUB_SHA}"
+          CLIENT_REMOTE="$REGISTRY/${{ vars.AWS_LIGHTSAIL_SERVICE }}:client-${GITHUB_SHA}"
           
           docker tag "client:${GITHUB_SHA}" "$CLIENT_REMOTE"
           docker push "$CLIENT_REMOTE"
