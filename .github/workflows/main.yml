@@ -105,6 +105,13 @@ jobs:
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
 
+      - name: Build server image
+        run: docker build -t server:${GITHUB_SHA} -f ./server/Dockerfile .
+
+      - name: Build client image
+        run: docker build --build-arg VITE_API_PATH=${{vars.VITE_API_PATH}} -t client:${GITHUB_SHA} -f ./client/Dockerfile .
+
+
       - name: Push server image
         id: push_server
         run: |
