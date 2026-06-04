@@ -120,17 +120,10 @@ jobs:
             --label "$SERVER_IMAGE_TAG" \
             --image "server:${GITHUB_SHA}" \
             2>&1 | tee push-server.log
-
-          grep -E ":${{ vars.AWS_LIGHTSAIL_SERVICE }}\.server\.[0-9]+" push-server.log
+          echo "---- push-server.log ----"
+          cat push-server.log
 
       - name: Show registered images after server push
-        run: |
-          aws lightsail get-container-images \
-            --region "$AWS_REGION" \
-            --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
-            --output json
-
-      - name: Show registered images after client push
         run: |
           aws lightsail get-container-images \
             --region "$AWS_REGION" \
@@ -146,9 +139,16 @@ jobs:
             --label "$CLIENT_IMAGE_TAG" \
             --image "client:${GITHUB_SHA}" \
             2>&1 | tee push-client.log
+          echo "---- push-client.log ----"
+          cat push-client.log
 
-          grep -E ":${{ vars.AWS_LIGHTSAIL_SERVICE }}\.client\.[0-9]+" push-client.log
-
+      - name: Show registered images after client push
+        run: |
+          aws lightsail get-container-images \
+            --region "$AWS_REGION" \
+            --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
+            --output json
+          
       - name: Resolve pushed image refs
         id: resolve_images
         run: |
