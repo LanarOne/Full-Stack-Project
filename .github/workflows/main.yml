@@ -162,6 +162,20 @@ jobs:
           }
           EOF
 
+      - name: Create public-endpoint.json
+        run: |
+          cat > public-endpoint.json <<EOF
+          {
+            "containerName": "client",
+            "containerPort": 80,
+            "healthCheck": {
+              "intervalSeconds": 15,
+              "path": "/",
+              "successCodes": "200-499"
+            }
+          }
+          EOF
+
       - name: Show containers.json
         run: cat containers.json
 
