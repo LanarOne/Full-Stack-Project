@@ -118,6 +118,13 @@ jobs:
             --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
             --label "$SERVER_IMAGE_TAG" \
             --image "server:${GITHUB_SHA}"
+          
+      - name: Show images after push
+        run: |
+          aws lightsail get-container-images \
+            --region "$AWS_REGION" \
+            --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
+            --output json
 
       - name: Push client image
         run: |
@@ -127,38 +134,83 @@ jobs:
             --label "$CLIENT_IMAGE_TAG" \
             --image "client:${GITHUB_SHA}"
 
+      - name: Show images after push
+        run: |
+          aws lightsail get-container-images \
+            --region "$AWS_REGION" \
+            --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
+            --output json
+
       - name: Resolve pushed image refs
         id: resolve_images
         run: |
-          IMAGES_JSON=$(aws lightsail get-container-images \
+          BEFORE_JSON=$(aws lightsail get-container-images \
             --region "$AWS_REGION" \
             --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
             --output json)
-
-          echo "$IMAGES_JSON" > images.json
-
-          SERVER_IMAGE=$(jq -r '
+      
+          echo "$BEFORE_JSON" > before-images.json
+      
+          BEFORE_SERVER=$(jq -r '
             .containerImages
             | map(select(.image | test("^:" + "${{ vars.AWS_LIGHTSAIL_SERVICE }}" + "\\.server\\.")))
             | sort_by(.createdAt)
             | last
             | .image
-          ' images.json)
-
-          CLIENT_IMAGE=$(jq -r '
+          ' before-images.json)
+      
+          BEFORE_CLIENT=$(jq -r '
             .containerImages
             | map(select(.image | test("^:" + "${{ vars.AWS_LIGHTSAIL_SERVICE }}" + "\\.client\\.")))
             | sort_by(.createdAt)
             | last
             | .image
-          ' images.json)
-
+          ' before-images.json)
+      
+          echo "BEFORE_SERVER=$BEFORE_SERVER"
+          echo "BEFORE_CLIENT=$BEFORE_CLIENT"
+      
+          for i in {1..20}; do
+            IMAGES_JSON=$(aws lightsail get-container-images \
+              --region "$AWS_REGION" \
+              --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
+              --output json)
+      
+            echo "$IMAGES_JSON" > images.json
+      
+            SERVER_IMAGE=$(jq -r '
+              .containerImages
+              | map(select(.image | test("^:" + "${{ vars.AWS_LIGHTSAIL_SERVICE }}" + "\\.server\\.")))
+              | sort_by(.createdAt)
+              | last
+              | .image
+            ' images.json)
+      
+            CLIENT_IMAGE=$(jq -r '
+              .containerImages
+              | map(select(.image | test("^:" + "${{ vars.AWS_LIGHTSAIL_SERVICE }}" + "\\.client\\.")))
+              | sort_by(.createdAt)
+              | last
+              | .image
+            ' images.json)
+      
+            echo "Attempt $i: server=$SERVER_IMAGE client=$CLIENT_IMAGE"
+      
+            if [ "$SERVER_IMAGE" != "$BEFORE_SERVER" ] && [ "$CLIENT_IMAGE" != "$BEFORE_CLIENT" ]; then
+              break
+            fi
+      
+            sleep 10
+          done
+      
           test -n "$SERVER_IMAGE" && test "$SERVER_IMAGE" != "null"
           test -n "$CLIENT_IMAGE" && test "$CLIENT_IMAGE" != "null"
-
+          test "$SERVER_IMAGE" != "$BEFORE_SERVER"
+          test "$CLIENT_IMAGE" != "$BEFORE_CLIENT"
+      
           echo "server_image=$SERVER_IMAGE" >> "$GITHUB_OUTPUT"
           echo "client_image=$CLIENT_IMAGE" >> "$GITHUB_OUTPUT"
-
+      
           echo "SERVER_IMAGE=$SERVER_IMAGE"
           echo "CLIENT_IMAGE=$CLIENT_IMAGE"
 
