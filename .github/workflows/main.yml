@@ -111,6 +111,35 @@ jobs:
       - name: Build client image
         run: docker build --build-arg VITE_API_PATH=${{vars.VITE_API_PATH}} -t client:${GITHUB_SHA} -f ./client/Dockerfile .
 
+      - name: Capture current image refs
+        id: before_images
+        run: |
+          aws lightsail get-container-images \
+            --region "$AWS_REGION" \
+            --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
+            --output json > before-images.json
+          
+          BEFORE_SERVER=$(jq -r '
+            .containerImages
+            | map(select(.image | test("^:" + "${{ vars.AWS_LIGHTSAIL_SERVICE }}" + "\\.server\\.")))
+            | sort_by(.createdAt)
+            | last
+            | .image
+          ' before-images.json)
+          
+          BEFORE_CLIENT=$(jq -r '
+            .containerImages
+            | map(select(.image | test("^:" + "${{ vars.AWS_LIGHTSAIL_SERVICE }}" + "\\.client\\.")))
+            | sort_by(.createdAt)
+            | last
+            | .image
+          ' before-images.json)
+          
+          echo "server=$BEFORE_SERVER" >> "$GITHUB_OUTPUT"
+          echo "client=$BEFORE_CLIENT" >> "$GITHUB_OUTPUT"
+          echo "BEFORE_SERVER=$BEFORE_SERVER"
+          echo "BEFORE_CLIENT=$BEFORE_CLIENT"
+
       - name: Push server image
         run: |
           set -euo pipefail
@@ -148,44 +177,19 @@ jobs:
             --region "$AWS_REGION" \
             --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
             --output json
-          
+
       - name: Resolve pushed image refs
         id: resolve_images
         run: |
-          BEFORE_JSON=$(aws lightsail get-container-images \
-            --region "$AWS_REGION" \
-            --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
-            --output json)
-      
-          echo "$BEFORE_JSON" > before-images.json
-      
-          BEFORE_SERVER=$(jq -r '
-            .containerImages
-            | map(select(.image | test("^:" + "${{ vars.AWS_LIGHTSAIL_SERVICE }}" + "\\.server\\.")))
-            | sort_by(.createdAt)
-            | last
-            | .image
-          ' before-images.json)
-      
-          BEFORE_CLIENT=$(jq -r '
-            .containerImages
-            | map(select(.image | test("^:" + "${{ vars.AWS_LIGHTSAIL_SERVICE }}" + "\\.client\\.")))
-            | sort_by(.createdAt)
-            | last
-            | .image
-          ' before-images.json)
-      
-          echo "BEFORE_SERVER=$BEFORE_SERVER"
-          echo "BEFORE_CLIENT=$BEFORE_CLIENT"
-      
+          BEFORE_SERVER="${{ steps.before_images.outputs.server }}"
+          BEFORE_CLIENT="${{ steps.before_images.outputs.client }}"
+
           for i in {1..20}; do
-            IMAGES_JSON=$(aws lightsail get-container-images \
+            aws lightsail get-container-images \
               --region "$AWS_REGION" \
               --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
-              --output json)
-      
-            echo "$IMAGES_JSON" > images.json
-      
+              --output json > images.json
+
             SERVER_IMAGE=$(jq -r '
               .containerImages
               | map(select(.image | test("^:" + "${{ vars.AWS_LIGHTSAIL_SERVICE }}" + "\\.server\\.")))
@@ -193,7 +197,7 @@ jobs:
               | last
               | .image
             ' images.json)
-      
+
             CLIENT_IMAGE=$(jq -r '
               .containerImages
               | map(select(.image | test("^:" + "${{ vars.AWS_LIGHTSAIL_SERVICE }}" + "\\.client\\.")))
@@ -201,26 +205,20 @@ jobs:
               | last
               | .image
             ' images.json)
-      
-            echo "Attempt $i: server=$SERVER_IMAGE client=$CLIENT_IMAGE"
-      
+
+            echo "Attempt $i: before_server=$BEFORE_SERVER server=$SERVER_IMAGE before_client=$BEFORE_CLIENT client=$CLIENT_IMAGE"
+
             if [ "$SERVER_IMAGE" != "$BEFORE_SERVER" ] && [ "$CLIENT_IMAGE" != "$BEFORE_CLIENT" ]; then
-              break
+              echo "server_image=$SERVER_IMAGE" >> "$GITHUB_OUTPUT"
+              echo "client_image=$CLIENT_IMAGE" >> "$GITHUB_OUTPUT"
+              exit 0
             fi
-      
+
             sleep 10
           done
-      
-          test -n "$SERVER_IMAGE" && test "$SERVER_IMAGE" != "null"
-          test -n "$CLIENT_IMAGE" && test "$CLIENT_IMAGE" != "null"
-          test "$SERVER_IMAGE" != "$BEFORE_SERVER"
-          test "$CLIENT_IMAGE" != "$BEFORE_CLIENT"
-      
-          echo "server_image=$SERVER_IMAGE" >> "$GITHUB_OUTPUT"
-          echo "client_image=$CLIENT_IMAGE" >> "$GITHUB_OUTPUT"
-      
-          echo "SERVER_IMAGE=$SERVER_IMAGE"
-          echo "CLIENT_IMAGE=$CLIENT_IMAGE"
+
+          echo "No new registered images detected."
+          exit 1
 
 
       - name: Create containers.json
