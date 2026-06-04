@@ -111,7 +111,6 @@ jobs:
       - name: Build client image
         run: docker build --build-arg VITE_API_PATH=${{vars.VITE_API_PATH}} -t client:${GITHUB_SHA} -f ./client/Dockerfile .
 
-
       - name: Push server image
         id: push_server
         run: |
@@ -120,7 +119,10 @@ jobs:
             --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
             --label "$SERVER_IMAGE_TAG" \
             --image "server:${GITHUB_SHA}" \
-            --output json | tee server-push.json | jq -r '.image')
+            --query 'image' \
+            --output text)
+          
+          test -n "$SERVER_IMAGE" && test "$SERVER_IMAGE" != "None"
           echo "image=$SERVER_IMAGE" >> "$GITHUB_OUTPUT"
           echo "SERVER_IMAGE=$SERVER_IMAGE"
 
@@ -132,7 +134,10 @@ jobs:
             --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
             --label "$CLIENT_IMAGE_TAG" \
             --image "client:${GITHUB_SHA}" \
-            --output json | tee client-push.json | jq -r '.image')
+            --query 'image' \
+            --output text)
+          
+          test -n "$CLIENT_IMAGE" && test "$CLIENT_IMAGE" != "None"
           echo "image=$CLIENT_IMAGE" >> "$GITHUB_OUTPUT"
           echo "CLIENT_IMAGE=$CLIENT_IMAGE"
 
