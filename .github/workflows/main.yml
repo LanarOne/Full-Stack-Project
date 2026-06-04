@@ -141,6 +141,11 @@ jobs:
           echo "image=$CLIENT_IMAGE" >> "$GITHUB_OUTPUT"
           echo "CLIENT_IMAGE=$CLIENT_IMAGE"
 
+      - name: Show pushed image refs
+        run: |
+          echo "server=${{ steps.push_server.outputs.image }}"
+          echo "client=${{ steps.push_client.outputs.image }}"
+
       - name: Create containers.json
         run: |
           cat > containers.json <<EOF
