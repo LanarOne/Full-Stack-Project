@@ -112,46 +112,63 @@ jobs:
         run: docker build --build-arg VITE_API_PATH=${{vars.VITE_API_PATH}} -t client:${GITHUB_SHA} -f ./client/Dockerfile .
 
       - name: Push server image
-        id: push_server
         run: |
-          SERVER_IMAGE=$(aws lightsail push-container-image \
+          aws lightsail push-container-image \
             --region "$AWS_REGION" \
             --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
             --label "$SERVER_IMAGE_TAG" \
-            --image "server:${GITHUB_SHA}" \
-            --query 'image' \
-            --output text)
-          
-          test -n "$SERVER_IMAGE" && test "$SERVER_IMAGE" != "None"
-          echo "image=$SERVER_IMAGE" >> "$GITHUB_OUTPUT"
-          echo "SERVER_IMAGE=$SERVER_IMAGE"
+            --image "server:${GITHUB_SHA}"
 
       - name: Push client image
-        id: push_client
         run: |
-          CLIENT_IMAGE=$(aws lightsail push-container-image \
+          aws lightsail push-container-image \
             --region "$AWS_REGION" \
             --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
             --label "$CLIENT_IMAGE_TAG" \
-            --image "client:${GITHUB_SHA}" \
-            --query 'image' \
-            --output text)
-          
-          test -n "$CLIENT_IMAGE" && test "$CLIENT_IMAGE" != "None"
-          echo "image=$CLIENT_IMAGE" >> "$GITHUB_OUTPUT"
+            --image "client:${GITHUB_SHA}"
+
+      - name: Resolve pushed image refs
+        id: resolve_images
+        run: |
+          IMAGES_JSON=$(aws lightsail get-container-images \
+            --region "$AWS_REGION" \
+            --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
+            --output json)
+
+          echo "$IMAGES_JSON" > images.json
+
+          SERVER_IMAGE=$(jq -r '
+            .containerImages
+            | map(select(.image | test("^:" + "${{ vars.AWS_LIGHTSAIL_SERVICE }}" + "\\.server\\.")))
+            | sort_by(.createdAt)
+            | last
+            | .image
+          ' images.json)
+
+          CLIENT_IMAGE=$(jq -r '
+            .containerImages
+            | map(select(.image | test("^:" + "${{ vars.AWS_LIGHTSAIL_SERVICE }}" + "\\.client\\.")))
+            | sort_by(.createdAt)
+            | last
+            | .image
+          ' images.json)
+
+          test -n "$SERVER_IMAGE" && test "$SERVER_IMAGE" != "null"
+          test -n "$CLIENT_IMAGE" && test "$CLIENT_IMAGE" != "null"
+
+          echo "server_image=$SERVER_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "client_image=$CLIENT_IMAGE" >> "$GITHUB_OUTPUT"
+
+          echo "SERVER_IMAGE=$SERVER_IMAGE"
           echo "CLIENT_IMAGE=$CLIENT_IMAGE"
 
-      - name: Show pushed image refs
-        run: |
-          echo "server=${{ steps.push_server.outputs.image }}"
-          echo "client=${{ steps.push_client.outputs.image }}"
 
       - name: Create containers.json
         run: |
           cat > containers.json <<EOF
           {
             "client": {
-              "image": "${{ steps.push_client.outputs.image }}",
+              "image": "${{ steps.resolve_images.outputs.client_image }}",
               "command": [],
               "ports": {
                 "80": "HTTP"
@@ -161,7 +178,7 @@ jobs:
               }
             },
             "server": {
-              "image": "${{ steps.push_server.outputs.image }}",
+              "image": "${{ steps.resolve_images.outputs.server_image }}",
               "ports": {
                 "3000": "HTTP"
               },
