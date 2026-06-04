@@ -79,7 +79,7 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6
@@ -102,70 +102,62 @@ jobs:
           echo "GITHUB_SHA=$GITHUB_SHA"
           git log -1 --oneline
 
-      - name: Build server image
-        run: docker build -t server:${GITHUB_SHA} -f ./server/Dockerfile .
-
-      - name: Build client image
-        run: docker build --build-arg VITE_API_PATH=${{vars.VITE_API_PATH}} -t client:${GITHUB_SHA} -f ./client/Dockerfile .
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Push server image
+        id: push_server
         run: |
-          aws lightsail push-container-image --region ${{vars.AWS_REGION}} --service-name ${{vars.AWS_LIGHTSAIL_SERVICE}} --label $SERVER_IMAGE_TAG --image server:${GITHUB_SHA} --output json | tee server-push.json
+          SERVER_IMAGE=$(aws lightsail push-container-image \
+            --region "$AWS_REGION" \
+            --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
+            --label "$SERVER_IMAGE_TAG" \
+            --image "server:${GITHUB_SHA}" \
+            --output json | tee server-push.json | jq -r '.image')
+          echo "image=$SERVER_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "SERVER_IMAGE=$SERVER_IMAGE"
 
       - name: Push client image
+        id: push_client
         run: |
-          aws lightsail push-container-image --region ${{vars.AWS_REGION}} --service-name ${{vars.AWS_LIGHTSAIL_SERVICE}} --label $CLIENT_IMAGE_TAG --image client:${GITHUB_SHA} --output json | tee client-push.json
-
-      - name: Show registered Lightsail images
-        run: |
-          aws lightsail get-container-images \
-            --region ${{ vars.AWS_REGION }} \
-            --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }} \
-            --output json
+          CLIENT_IMAGE=$(aws lightsail push-container-image \
+            --region "$AWS_REGION" \
+            --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
+            --label "$CLIENT_IMAGE_TAG" \
+            --image "client:${GITHUB_SHA}" \
+            --output json | tee client-push.json | jq -r '.image')
+          echo "image=$CLIENT_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "CLIENT_IMAGE=$CLIENT_IMAGE"
 
       - name: Create containers.json
         run: |
           cat > containers.json <<EOF
           {
-          "client": {
-            "image": ":${{vars.AWS_LIGHTSAIL_SERVICE}}.client.latest",
-            "command": [],
-            "ports": {
-              "80": "HTTP"
-            },
-            "environment": {
-              "API_PROXY_PASS": "http://localhost:3000"
-            }
-          },
-          "server": {
-            "image": ":${{vars.AWS_LIGHTSAIL_SERVICE}}.server.latest",
-            "ports": {
-              "3000":"HTTP"
-            },
-            "environment": {
-              "NODE_ENV": "production",
-              "PORT": "3000",
-              "DATABASE_URL": "${{secrets.DATABASE_URL}}",
-              "TOKEN_KEY": "${{secrets.TOKEN_KEY}}",
-              "TOKEN_EXPIRES_IN": "${{vars.TOKEN_EXPIRES_IN}}",
-              "PASSWORD_COST": "${{secrets.PASSWORD_COST}}",
-              "TRPC_ROUTE": "${{secrets.TRPC_ROUTE}}",
-              "COOKIE_NAME": "${{secrets.COOKIE_NAME}}"
+            "client": {
+              "image": "${{ steps.push_client.outputs.image }}",
+              "command": [],
+              "ports": {
+                "80": "HTTP"
+              },
+              "environment": {
+                "API_PROXY_PASS": "http://localhost:3000"
               }
-            }
-          }
-          EOF
-
-      - name: Create public-endpoint.json
-        run: |
-          cat > public-endpoint.json <<EOF
-          {
-            "containerName": "client",
-            "containerPort": 80,
-            "healthCheck": {
-              "intervalSeconds": 15,
-              "path": "/",
-              "successCodes": "200-499"
+            },
+            "server": {
+              "image": "${{ steps.push_server.outputs.image }}",
+              "ports": {
+                "3000": "HTTP"
+              },
+              "environment": {
+                "NODE_ENV": "production",
+                "PORT": "3000",
+                "DATABASE_URL": "${{ secrets.DATABASE_URL }}",
+                "TOKEN_KEY": "${{ secrets.TOKEN_KEY }}",
+                "TOKEN_EXPIRES_IN": "${{ vars.TOKEN_EXPIRES_IN }}",
+                "PASSWORD_COST": "${{ secrets.PASSWORD_COST }}",
+                "TRPC_ROUTE": "${{ secrets.TRPC_ROUTE }}",
+                "COOKIE_NAME": "${{ secrets.COOKIE_NAME }}"
+              }
             }
           }
           EOF
