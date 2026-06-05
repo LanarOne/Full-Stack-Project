@@ -157,6 +157,13 @@ jobs:
           echo "---- push-server.log ----"
           cat push-server.log
 
+      - name: Show registered images after server push
+        run: |
+          aws lightsail get-container-images \
+            --region "$AWS_REGION" \
+            --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
+            --output json
+
       - name: Push client image to Lightsail
         run: |
           set -euo pipefail
@@ -169,6 +176,13 @@ jobs:
 
           echo "---- push-client.log ----"
           cat push-client.log
+
+      - name: Show registered images after client push
+        run: |
+          aws lightsail get-container-images \
+            --region "$AWS_REGION" \
+            --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
+            --output json
 
       - name: Resolve pushed image refs
         id: resolve_images
@@ -212,7 +226,8 @@ jobs:
           echo "No new registered images detected."
           echo "server_image=$SERVER_IMAGE" >> "$GITHUB_OUTPUT"
           echo "client_image=$CLIENT_IMAGE" >> "$GITHUB_OUTPUT"
-          
+          echo "No new registered images detected."
+          exit 1
 
 
       - name: Create containers.json
