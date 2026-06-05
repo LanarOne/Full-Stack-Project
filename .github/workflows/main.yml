@@ -93,19 +93,19 @@ jobs:
 
       - name: Install Lightsail CLI helper
         run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
+          set -euo pipefail
+          curl -fL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip -q awscliv2.zip
           sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
-          sudo curl "https://s3.us-west-2.amazonaws.com/lightsailctl/linux-amd64/lightsailctl" -o "/usr/local/bin/lightsailctl"
+
+          sudo curl -fL "https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl" -o "/usr/local/bin/lightsailctl"
           sudo chmod +x /usr/local/bin/lightsailctl
 
-      - name: Show AWS and lightsailctl versions
-        run: |
           aws --version
-          which lightsailctl
-          ls -l /usr/local/bin/lightsailctl
+          ls -lh /usr/local/bin/lightsailctl
+          file /usr/local/bin/lightsailctl || true
           /usr/local/bin/lightsailctl --version || true
-          aws lightsail get-container-api-metadata --region "$AWS_REGION"
+
 
       - name: Debug commit
         run: |
