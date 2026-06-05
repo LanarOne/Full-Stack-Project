@@ -143,73 +143,32 @@ jobs:
           echo "BEFORE_SERVER=$BEFORE_SERVER"
           echo "BEFORE_CLIENT=$BEFORE_CLIENT"
 
-      - name: Get Lightsail registry login
-        run: |
-          aws lightsail create-container-service-registry-login \
-            --region "$AWS_REGION" \
-            --output json > registry-login.json
-      
-          REGISTRY=$(jq -r '.registryLogin.registry' registry-login.json)
-          USERNAME=$(jq -r '.registryLogin.username' registry-login.json)
-          PASSWORD=$(jq -r '.registryLogin.password' registry-login.json)
-      
-          test -n "$REGISTRY" && test "$REGISTRY" != "null"
-          test -n "$USERNAME" && test "$USERNAME" != "null"
-          test -n "$PASSWORD" && test "$PASSWORD" != "null"
-      
-          echo "$PASSWORD" | docker login --username "$USERNAME" --password-stdin "$REGISTRY"
-      
-          echo "REGISTRY=$REGISTRY" >> "$GITHUB_ENV"
-          echo "---- registry-login.json ----"
-          cat registry-login.json
 
-      - name: Push server image to Lightsail registry
+      - name: Push server image to Lightsail
         run: |
           set -euo pipefail
-          SERVER_REMOTE="$REGISTRY/${{ vars.AWS_LIGHTSAIL_SERVICE }}:server-${GITHUB_SHA}"
-          
-          docker tag "server:${GITHUB_SHA}" "$SERVER_REMOTE"
-          docker push "$SERVER_REMOTE"
-          
-          echo "SERVER_REMOTE=$SERVER_REMOTE" >> "$GITHUB_ENV"
-          echo "SERVER_REMOTE=$SERVER_REMOTE"
-
-      - name: Register server image in Lightsail
-        run: |
-          set -euo pipefail
-          SERVER_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' "$SERVER_REMOTE" | awk -F@ '{print $2}')
-          
-          aws lightsail register-container-image \
+          aws lightsail push-container-image \
             --region "$AWS_REGION" \
             --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
             --label "$SERVER_IMAGE_TAG" \
-            --digest "$SERVER_DIGEST"
-          
-          echo "SERVER_DIGEST=$SERVER_DIGEST"
+            --image "server:${GITHUB_SHA}" \
+            2>&1 | tee push-server.log
 
-      - name: Push client image to Lightsail registry
+          echo "---- push-server.log ----"
+          cat push-server.log
+
+      - name: Push client image to Lightsail
         run: |
           set -euo pipefail
-          CLIENT_REMOTE="$REGISTRY/${{ vars.AWS_LIGHTSAIL_SERVICE }}:client-${GITHUB_SHA}"
-          
-          docker tag "client:${GITHUB_SHA}" "$CLIENT_REMOTE"
-          docker push "$CLIENT_REMOTE"
-          
-          echo "CLIENT_REMOTE=$CLIENT_REMOTE" >> "$GITHUB_ENV"
-          echo "CLIENT_REMOTE=$CLIENT_REMOTE"
-
-      - name: Register client image in Lightsail
-        run: |
-          set -euo pipefail
-          CLIENT_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' "$CLIENT_REMOTE" | awk -F@ '{print $2}')
-          
-          aws lightsail register-container-image \
+          aws lightsail push-container-image \
             --region "$AWS_REGION" \
             --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
             --label "$CLIENT_IMAGE_TAG" \
-            --digest "$CLIENT_DIGEST"
-          
-          echo "CLIENT_DIGEST=$CLIENT_DIGEST"
+            --image "client:${GITHUB_SHA}" \
+            2>&1 | tee push-client.log
+
+          echo "---- push-client.log ----"
+          cat push-client.log
 
       - name: Resolve pushed image refs
         id: resolve_images
