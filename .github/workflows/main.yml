@@ -99,6 +99,14 @@ jobs:
           sudo curl "https://s3.us-west-2.amazonaws.com/lightsailctl/linux-amd64/lightsailctl" -o "/usr/local/bin/lightsailctl"
           sudo chmod +x /usr/local/bin/lightsailctl
 
+      - name: Show AWS and lightsailctl versions
+        run: |
+          aws --version
+          which lightsailctl
+          ls -l /usr/local/bin/lightsailctl
+          /usr/local/bin/lightsailctl --version || true
+          aws lightsail get-container-api-metadata --region "$AWS_REGION"
+
       - name: Debug commit
         run: |
           echo "GITHUB_REF=$GITHUB_REF"
@@ -148,6 +156,7 @@ jobs:
         run: |
           set -euo pipefail
           aws lightsail push-container-image \
+            --debug \
             --region "$AWS_REGION" \
             --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
             --label "$SERVER_IMAGE_TAG" \
@@ -168,6 +177,7 @@ jobs:
         run: |
           set -euo pipefail
           aws lightsail push-container-image \
+            --debug \
             --region "$AWS_REGION" \
             --service-name "${{ vars.AWS_LIGHTSAIL_SERVICE }}" \
             --label "$CLIENT_IMAGE_TAG" \
